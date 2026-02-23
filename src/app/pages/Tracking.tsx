@@ -40,22 +40,6 @@ export default function Tracking() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'text-green-600';
-      case 'in_transit':
-      case 'out_for_delivery':
-        return 'text-blue-600';
-      case 'pending':
-        return 'text-yellow-600';
-      case 'cancelled':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
-
   const getMapEmbedUrl = (location: string) =>
     `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
 
@@ -338,10 +322,10 @@ export default function Tracking() {
               </p>
               <div className="flex gap-4 justify-center mb-6">
                 <a
-                  href="tel:078.777.6666"
+                  href="tel:+2342013300045"
                   className="text-[#1b75bc] font-bold hover:underline"
                 >
-                  Call: 078.777.6666
+                  Call: +234 201 330 0045
                 </a>
                 <span className="text-gray-400">|</span>
                 <a
@@ -350,21 +334,6 @@ export default function Tracking() {
                 >
                   Email Us
                 </a>
-              </div>
-              
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm font-bold text-[#324048] mb-3">Try these demo tracking numbers:</p>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {['TL202602210001', 'TL202602200045', 'TL202602180123'].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => setTrackingNumber(num)}
-                      className="px-4 py-2 bg-[#a5e3f6] bg-opacity-40 rounded-lg text-[#1b75bc] font-bold hover:bg-opacity-60 transition-colors text-sm"
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           )}

@@ -33,7 +33,17 @@ app.use(
     credentials: true
   })
 );
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", 'data:', 'https:'],
+        "frame-src": ["'self'", 'https://www.google.com', 'https://maps.google.com'],
+      },
+    },
+  })
+);
 app.use(express.json({ limit: '1mb' }));
 app.use(requestSecurity);
 

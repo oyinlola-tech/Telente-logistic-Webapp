@@ -1,158 +1,143 @@
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import { Target, Users, Award, Globe } from 'lucide-react';
+import { Award, Globe, ShieldCheck, Target, Users } from 'lucide-react';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+
+const leadership = [
+  { name: 'Amina Bello', role: 'Chief Executive Officer' },
+  { name: 'Tunde Adebayo', role: 'Chief Operations Officer' },
+  { name: 'Chinonso Eze', role: 'Chief Technology Officer' },
+];
 
 export default function About() {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen bg-white">
       <Header />
-      
-      <main className="pt-[85px] pb-20">
-        {/* Hero Section */}
+
+      <main className="pb-20 pt-[85px]">
         <section className="bg-gradient-to-r from-[#1b75bc] to-[#336FB3] py-20">
-          <div className="max-w-7xl mx-auto px-8 text-center text-white">
-            <h1 className="text-5xl font-bold mb-4">About Telente Logistics</h1>
-            <p className="text-xl max-w-3xl mx-auto">
-              Your trusted partner in global logistics solutions, connecting businesses worldwide
+          <div className="mx-auto max-w-7xl px-4 text-center text-white sm:px-6 lg:px-8">
+            <h1 className="mb-4 text-4xl font-bold sm:text-5xl">About Telente Logistics</h1>
+            <p className="mx-auto max-w-3xl text-lg text-blue-50 sm:text-xl">
+              A Nigerian logistics company helping businesses scale with dependable national and international movement.
             </p>
           </div>
         </section>
 
-        {/* Mission & Vision */}
-        <section className="py-20 max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-16 h-16 bg-[#1b75bc] rounded-full flex items-center justify-center mb-6">
-                <Target className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-[#324048] mb-4">Our Mission</h2>
-              <p className="text-lg text-gray-700">
-                To provide seamless, reliable, and efficient logistics solutions that empower
-                businesses to reach their full potential in the global marketplace. We strive
-                to exceed expectations through innovation, dedication, and exceptional service.
-              </p>
-            </div>
-            
-            <div className="bg-gray-50 rounded-xl p-8">
-              <div className="w-16 h-16 bg-[#336FB3] rounded-full flex items-center justify-center mb-6">
-                <Globe className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-[#324048] mb-4">Our Vision</h2>
-              <p className="text-lg text-gray-700">
-                To become the world's most trusted and innovative logistics partner, recognized
-                for our commitment to sustainability, technology-driven solutions, and
-                customer-centric approach in every shipment we handle.
-              </p>
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+          <div className="overflow-hidden rounded-2xl border border-[#dde8f3] bg-white shadow-sm">
+            <ImageWithFallback
+              src="/images/about-warehouse.jpg"
+              alt="Telente warehouse operations"
+              className="h-full min-h-[320px] w-full object-cover"
+            />
+          </div>
+          <div className="space-y-5">
+            <h2 className="text-3xl font-bold text-[#22323d]">Built for the Demands of Modern Commerce</h2>
+            <p className="text-[#5e6d79]">
+              Telente Logistics supports importers, manufacturers, distributors, and e-commerce brands with coordinated freight, warehousing, and delivery operations.
+            </p>
+            <p className="text-[#5e6d79]">
+              From ports and airports to nationwide distribution points, our teams combine structured processes with practical technology to keep goods moving efficiently.
+            </p>
+            <p className="text-[#5e6d79]">
+              We focus on consistency, communication, and accountability so clients can plan inventory and customer delivery promises with confidence.
+            </p>
+          </div>
+        </section>
+
+        <section className="bg-[#f6f9fc] py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <article className="rounded-2xl border border-[#dde8f3] bg-white p-7">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#e7f2fb]">
+                  <Target className="h-6 w-6 text-[#1b75bc]" />
+                </div>
+                <h3 className="text-2xl font-bold text-[#243541]">Our Mission</h3>
+                <p className="mt-3 text-[#5f6e7a]">
+                  Deliver logistics services that raise operational reliability for every client, regardless of shipment size or route complexity.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-[#dde8f3] bg-white p-7">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#e7f2fb]">
+                  <Globe className="h-6 w-6 text-[#1b75bc]" />
+                </div>
+                <h3 className="text-2xl font-bold text-[#243541]">Our Vision</h3>
+                <p className="mt-3 text-[#5f6e7a]">
+                  Become Africa&apos;s most trusted logistics execution partner for businesses that require speed, traceability, and disciplined delivery outcomes.
+                </p>
+              </article>
             </div>
           </div>
         </section>
 
-        {/* Our Story */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-8">
-            <h2 className="text-4xl font-bold text-[#324048] text-center mb-12">Our Story</h2>
-            <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700">
-              <p>
-                Founded with a vision to revolutionize the logistics industry, Telente Logistics
-                has grown from a small local operation to a global logistics powerhouse. Our
-                journey began with a simple belief: that every business, regardless of size,
-                deserves access to world-class shipping solutions.
-              </p>
-              <p>
-                Over the years, we've built an extensive network spanning continents, invested
-                in cutting-edge technology, and assembled a team of dedicated professionals who
-                share our passion for excellence. Today, we handle thousands of shipments daily,
-                each one treated with the same care and attention to detail.
-              </p>
-              <p>
-                What sets us apart is our unwavering commitment to our customers. We don't just
-                move packages; we build relationships, solve problems, and help businesses grow.
-                From small startups to Fortune 500 companies, our clients trust us to deliver
-                their goods safely, efficiently, and on time, every time.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Core Values */}
-        <section className="py-20 max-w-7xl mx-auto px-8">
-          <h2 className="text-4xl font-bold text-[#324048] text-center mb-4">
-            Our Core Values
-          </h2>
-          <div className="h-1 w-[220px] bg-[#336FB3] mx-auto mb-12"></div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <h2 className="mb-10 text-center text-3xl font-bold text-[#22323d] sm:text-4xl">Core Values</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: Award,
-                title: 'Excellence',
-                description: 'We pursue excellence in every aspect of our service',
+                title: 'Execution Excellence',
+                description: 'We prioritize measurable quality in handling, dispatch, and delivery.',
               },
               {
                 icon: Users,
-                title: 'Customer First',
-                description: 'Our customers success is our top priority',
+                title: 'Client Partnership',
+                description: 'We align operations to client SLAs, growth plans, and business realities.',
               },
               {
-                icon: Target,
-                title: 'Reliability',
-                description: 'We deliver on our promises, every single time',
+                icon: ShieldCheck,
+                title: 'Operational Integrity',
+                description: 'We apply transparent processes and clear accountability across teams.',
               },
               {
                 icon: Globe,
-                title: 'Innovation',
-                description: 'We embrace technology to improve our services',
+                title: 'Continuous Innovation',
+                description: 'We improve our logistics stack to deliver better speed and visibility.',
               },
-            ].map((value, index) => (
-              <div key={index} className="text-center">
-                <div className="w-20 h-20 bg-[#a5e3f6] bg-opacity-40 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <value.icon className="w-10 h-10 text-[#1b75bc]" />
-                </div>
-                <h3 className="text-xl font-bold text-[#324048] mb-3">{value.title}</h3>
-                <p className="text-gray-700">{value.description}</p>
+            ].map((value) => (
+              <div key={value.title} className="rounded-xl border border-[#e1e9f2] bg-[#f9fcff] p-6 text-center">
+                <value.icon className="mx-auto h-8 w-8 text-[#1b75bc]" />
+                <h3 className="mt-4 text-lg font-bold text-[#243541]">{value.title}</h3>
+                <p className="mt-2 text-sm text-[#5f6d79]">{value.description}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-8">
-            <h2 className="text-4xl font-bold text-[#324048] text-center mb-12">
-              Our Leadership Team
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { name: 'John Anderson', role: 'Chief Executive Officer' },
-                { name: 'Sarah Williams', role: 'Chief Operations Officer' },
-                { name: 'Michael Chen', role: 'Chief Technology Officer' },
-              ].map((member, index) => (
-                <div key={index} className="bg-white rounded-xl p-6 text-center shadow-sm">
-                  <div className="w-32 h-32 bg-gray-300 rounded-full mx-auto mb-4"></div>
-                  <h3 className="text-xl font-bold text-[#324048] mb-1">{member.name}</h3>
-                  <p className="text-gray-600">{member.role}</p>
+        <section className="bg-[#f6f9fc] py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="mb-10 text-center text-3xl font-bold text-[#22323d] sm:text-4xl">Leadership Team</h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {leadership.map((member) => (
+                <div key={member.name} className="rounded-xl border border-[#dde8f3] bg-white p-6 text-center">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#eaf3fb] text-xl font-bold text-[#1b75bc]">
+                    {member.name
+                      .split(' ')
+                      .map((segment) => segment[0])
+                      .join('')}
+                  </div>
+                  <h3 className="mt-4 text-xl font-bold text-[#243541]">{member.name}</h3>
+                  <p className="text-[#647380]">{member.role}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="py-20 bg-[#1b75bc]">
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-              {[
-                { value: '15+', label: 'Years of Experience' },
-                { value: '50+', label: 'Countries Served' },
-                { value: '10K+', label: 'Daily Shipments' },
-                { value: '99.9%', label: 'On-Time Delivery' },
-              ].map((stat, index) => (
-                <div key={index}>
-                  <p className="text-5xl font-bold mb-2">{stat.value}</p>
-                  <p className="text-xl">{stat.label}</p>
-                </div>
-              ))}
-            </div>
+        <section className="bg-[#1b75bc] py-14">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 text-center text-white sm:px-6 md:grid-cols-4 lg:px-8">
+            {[
+              { value: '12+', label: 'Years in Logistics' },
+              { value: '36 + FCT', label: 'Coverage Footprint' },
+              { value: '45K+', label: 'Monthly Shipments' },
+              { value: '98.7%', label: 'Dispatch Reliability' },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p className="text-3xl font-bold sm:text-4xl">{stat.value}</p>
+                <p className="mt-2 text-sm text-blue-100">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>

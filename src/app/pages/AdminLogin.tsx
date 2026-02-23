@@ -5,8 +5,7 @@ import { Footer } from '../components/Footer';
 import { authApi } from '../utils/api';
 import { ADMIN_DASHBOARD_PATH, ADMIN_RESET_PASSWORD_PATH } from '../constants/security';
 
-const adminVisual =
-  'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1400&q=80';
+const adminVisual = '/images/about-warehouse.jpg';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -15,7 +14,6 @@ export default function AdminLogin() {
   const [otp, setOtp] = useState('');
   const [challengeToken, setChallengeToken] = useState('');
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
-  const [devOtp, setDevOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
@@ -47,7 +45,6 @@ export default function AdminLogin() {
       const result = await authApi.login({ username: username.trim(), password });
       setChallengeToken(result.challengeToken);
       setExpiresAt(result.expiresAt);
-      setDevOtp(result.devOtp || '');
       setInfo('A one-time passcode has been sent. Enter it to continue.');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
@@ -85,7 +82,6 @@ export default function AdminLogin() {
     try {
       const result = await authApi.resendOtp({ challengeToken });
       setExpiresAt(result.expiresAt);
-      setDevOtp(result.devOtp || '');
       setInfo('A new OTP has been sent.');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to resend OTP';
@@ -99,7 +95,6 @@ export default function AdminLogin() {
     setChallengeToken('');
     setOtp('');
     setExpiresAt(null);
-    setDevOtp('');
     setError('');
     setInfo('');
   };
@@ -192,9 +187,6 @@ export default function AdminLogin() {
                       />
                       {expiresAt ? (
                         <p className="mt-2 text-sm text-gray-600">OTP expires in about {remainingSeconds}s.</p>
-                      ) : null}
-                      {devOtp ? (
-                        <p className="mt-1 text-xs text-gray-500">Dev OTP: {devOtp}</p>
                       ) : null}
                     </div>
 

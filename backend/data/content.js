@@ -2,154 +2,154 @@ const services = [
   {
     id: 'air-freight',
     title: 'Air Freight',
-    description: 'Fast and reliable air cargo services for urgent shipments worldwide.',
+    description: 'Priority cargo services from Lagos and Abuja to major global trade lanes.',
     icon: 'Plane',
     features: [
-      'Express delivery within 24-48 hours',
-      'Real-time tracking and notifications',
-      'Customs clearance support',
-      'Temperature-controlled options'
+      '24-72 hour uplift options',
+      'Airport-to-door coordination',
+      'Customs documentation support',
+      'Priority handling for critical cargo'
     ],
     longDescription:
-      'Our air freight service is built for high-priority shipments. We coordinate carrier capacity, documentation, and destination handover to keep lead times predictable.',
+      'Our air freight service is optimized for urgent and high-value shipments. We coordinate cargo readiness, carrier booking, and destination handover to keep lead times predictable and secure.',
     benefits: [
-      'Fastest global transit times',
-      'High shipment security',
-      'Ideal for high-value goods',
-      'Reliable schedules'
+      'Fast international transit',
+      'Reduced stockout risk',
+      'High handling security',
+      'Reliable service windows'
     ]
   },
   {
     id: 'sea-freight',
     title: 'Sea Freight',
-    description: 'Cost-effective ocean shipping for large volume cargo.',
+    description: 'Economical containerized shipping through Lagos ports for large-volume cargo.',
     icon: 'Ship',
     features: [
-      'FCL and LCL options',
-      'Port-to-port or door-to-door',
-      'Insurance coverage options',
-      'Customs brokerage support'
+      'FCL and LCL booking options',
+      'Port-to-port and door-to-door',
+      'Cargo insurance support',
+      'Import and export advisory'
     ],
     longDescription:
-      'Our sea freight service supports both containerized and project cargo. We optimize routing and consolidation to lower total landed cost.',
+      'Our sea freight team supports importers, exporters, and project shippers with route planning, consolidation, and port operations designed to minimize landed cost.',
     benefits: [
-      'Best value for large volume',
-      'Great for non-urgent shipments',
-      'Handles oversized cargo',
+      'Best value for bulk cargo',
+      'Strong capacity planning',
+      'Coverage for oversized freight',
       'Lower shipping cost per unit'
     ]
   },
   {
     id: 'land-transport',
     title: 'Land Transport',
-    description: 'Efficient ground transportation for domestic and cross-border deliveries.',
+    description: 'Reliable nationwide haulage and regional distribution across Nigeria.',
     icon: 'Truck',
     features: [
-      'FTL and LTL options',
-      'Last-mile delivery',
-      'GPS visibility',
-      'Flexible pickup and routing'
+      'FTL and shared-load options',
+      'GPS vehicle monitoring',
+      'Scheduled route planning',
+      'Dedicated last-mile support'
     ],
     longDescription:
-      'Our road network covers major domestic and regional corridors with dependable pickup and drop-off windows.',
+      'Our land transport operation connects ports, factories, warehouses, and retail points across Nigeria with dependable route control and milestone visibility.',
     benefits: [
-      'Flexible routes',
-      'Cost-effective regional option',
-      'Direct store/warehouse delivery',
-      'Fast turnaround for domestic lanes'
+      'Flexible route coverage',
+      'Strong domestic turnaround',
+      'Direct business-to-business delivery',
+      'Scalable truck capacity'
     ]
   },
   {
     id: 'warehousing',
-    title: 'Warehousing & Storage',
-    description: 'Secure storage facilities with inventory management systems.',
+    title: 'Warehousing & Fulfillment',
+    description: 'Secure warehousing in strategic Nigerian locations with inventory visibility.',
     icon: 'Warehouse',
     features: [
-      'Climate-controlled storage',
-      'Inventory visibility',
-      'Pick and pack',
-      'Returns processing'
+      'Climate-sensitive storage zones',
+      'Inventory control and cycle counts',
+      'Pick-pack-dispatch workflows',
+      'Reverse logistics handling'
     ],
     longDescription:
-      'Our warehousing service supports short and long-term storage with inventory control and fulfillment workflows.',
+      'Our warehousing and fulfillment operations support fast-moving businesses with structured storage, order processing, and dispatch performance you can measure.',
     benefits: [
-      'Lower overhead',
-      'Scalable capacity',
-      'Better inventory accuracy',
-      'Faster fulfillment'
+      'Lower operating overhead',
+      'Improved stock accuracy',
+      'Faster order cycle times',
+      'Flexible storage capacity'
     ]
   },
   {
     id: 'express-delivery',
     title: 'Express Delivery',
-    description: 'Time-critical delivery services for urgent packages.',
+    description: 'Time-critical same-day and next-day parcel delivery in key cities.',
     icon: 'Package',
     features: [
-      'Same-day and next-day options',
-      'Priority handling',
-      'Delivery confirmation',
-      'Dedicated support'
+      'Same-day service in metro zones',
+      'Next-day nationwide coverage',
+      'Proof-of-delivery confirmation',
+      'Priority dispatch desk'
     ],
     longDescription:
-      'Express delivery is designed for shipments with strict deadlines, backed by priority routing and milestone updates.',
+      'Express delivery is designed for urgent customer orders, legal documents, and replacement parts, with rapid dispatch and real-time status updates.',
     benefits: [
       'Fastest delivery option',
-      'Ideal for urgent parcels',
-      'High reliability',
-      'Premium service handling'
+      'Better customer satisfaction',
+      'High delivery reliability',
+      'End-to-end visibility'
     ]
   },
   {
     id: 'international',
     title: 'International Shipping',
-    description: 'Cross-border logistics for global trade and e-commerce.',
+    description: 'Cross-border freight and e-commerce logistics from Nigeria to global markets.',
     icon: 'Globe',
     features: [
-      'Cross-border coordination',
-      'Documentation and compliance',
-      'Duties and taxes support',
-      'Returns logistics'
+      'Export and import coordination',
+      'Compliance and documentation guidance',
+      'Duty and tax visibility',
+      'Returns and reverse shipping support'
     ],
     longDescription:
-      'International shipping includes end-to-end planning for customs, duty exposure, and delivery performance across regions.',
+      'Our international shipping solutions help businesses scale beyond borders with clearer compliance pathways, reliable transit planning, and consistent handovers.',
     benefits: [
       'Simplified global expansion',
-      'Reduced customs friction',
-      'Consolidated shipping options',
-      'Consistent international SLAs'
+      'Fewer customs delays',
+      'Multi-modal shipping options',
+      'Consistent service quality'
     ]
   }
 ];
 
 const news = [
   {
-    id: 'network-expansion-2026',
-    title: 'Telente Logistics Expands Global Network with New Distribution Centers',
+    id: 'lagos-gateway-upgrade-2026',
+    title: 'Telente Logistics Expands Gateway Operations in Lagos',
     excerpt:
-      'We have opened three new distribution centers across Asia, Europe, and South America.',
+      'Our upgraded Lagos gateway increases sorting speed and line-haul capacity for domestic and international cargo.',
     content:
-      'Telente Logistics has expanded its global network with new distribution centers designed to improve delivery speed, inventory reach, and reliability for cross-border shipments.',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&h=800&fit=crop',
-    author: 'Marketing Team',
+      'Telente Logistics has expanded gateway operations in Lagos with improved sorting infrastructure, automated scanning points, and stronger dispatch controls. The upgrade helps reduce transfer delays, improve shipment accuracy, and support growing demand across Nigeria and West Africa.',
+    image: '/images/news-gateway.jpg',
+    author: 'Operations Team',
     publishedAt: '2026-02-15T09:30:00.000Z'
   },
   {
-    id: 'tracking-platform-upgrade',
-    title: 'New Tracking Platform Upgrade Delivers Better Milestone Visibility',
-    excerpt: 'Customers can now monitor package milestones with improved timing accuracy.',
+    id: 'fleet-visibility-upgrade',
+    title: 'New Fleet Visibility Platform Improves Customer Tracking',
+    excerpt: 'Customers now receive clearer movement milestones and more reliable delivery windows.',
     content:
-      'The tracking platform now provides clearer status milestones and expected delivery updates, improving operational transparency for both senders and recipients.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=800&fit=crop',
+      'Our latest tracking platform release introduces cleaner status milestones, stronger scan compliance at transfer points, and improved ETA confidence. Businesses can now monitor shipments with better operational clarity from pickup to delivery.',
+    image: '/images/news-tracking.jpg',
     author: 'Technology Team',
     publishedAt: '2026-02-10T12:00:00.000Z'
   },
   {
-    id: 'sustainability-fleet-initiative',
-    title: 'Sustainability Initiative Targets 50% Electric Fleet by 2027',
-    excerpt: 'A new fleet roadmap advances our long-term emissions reduction goals.',
+    id: 'green-logistics-commitment',
+    title: 'Telente Commits to Low-Emission Delivery Expansion by 2027',
+    excerpt: 'The company launches a phased plan to increase low-emission vehicles and cleaner routing.',
     content:
-      'The initiative includes phased EV adoption, route-level utilization planning, and charging infrastructure partnerships to lower logistics emissions.',
-    image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1200&h=800&fit=crop',
+      'Telente Logistics has launched a sustainability roadmap focused on route efficiency, fuel-aware planning, and phased low-emission fleet growth. The initiative supports long-term environmental goals while maintaining reliable delivery performance.',
+    image: '/images/news-sustainability.jpg',
     author: 'Sustainability Team',
     publishedAt: '2026-02-05T08:00:00.000Z'
   }
@@ -176,7 +176,7 @@ const jobs = [
     id: 'customer-support-specialist',
     title: 'Customer Support Specialist',
     department: 'Customer Experience',
-    location: 'Remote',
+    location: 'Abuja, Nigeria',
     type: 'Full-time',
     salary: 'Competitive',
     description:

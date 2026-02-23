@@ -57,7 +57,7 @@ This means:
 ### Frontend `.env` (root)
 Current frontend env keys:
 - `VITE_API_URL` e.g. `http://localhost:5000/api`
-- `VITE_ADMIN_LOGIN_PATH` e.g. `/portal-oyinlola-access-2026`
+- `VITE_ADMIN_LOGIN_PATH` e.g. `/admin/login`
 
 ### Backend `.env`
 Location:

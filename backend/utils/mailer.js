@@ -1,6 +1,26 @@
-const nodemailer = require('nodemailer');
-
 let transporter;
+let nodemailerModule;
+
+function getNodemailer() {
+  if (nodemailerModule) return nodemailerModule;
+  try {
+    // Load lazily so missing package does not crash server startup.
+    // This keeps local/dev runs usable even if email dependency is absent.
+    nodemailerModule = require('nodemailer');
+    return nodemailerModule;
+  } catch (error) {
+    return null;
+  }
+}
+
+function createJsonFallbackTransport() {
+  return {
+    async sendMail(payload) {
+      const message = JSON.stringify(payload);
+      return { message, accepted: payload?.to ? [payload.to] : [] };
+    }
+  };
+}
 
 function getTransporter() {
   if (transporter) return transporter;
@@ -11,7 +31,9 @@ function getTransporter() {
     process.env.SMTP_USER &&
     process.env.SMTP_PASS;
 
-  if (hasSmtpConfig) {
+  const nodemailer = getNodemailer();
+
+  if (hasSmtpConfig && nodemailer) {
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
@@ -22,9 +44,9 @@ function getTransporter() {
       }
     });
   } else {
-    transporter = nodemailer.createTransport({
-      jsonTransport: true
-    });
+    transporter = nodemailer
+      ? nodemailer.createTransport({ jsonTransport: true })
+      : createJsonFallbackTransport();
   }
 
   return transporter;
@@ -52,4 +74,3 @@ async function sendEmail({ to, subject, html, text }) {
 }
 
 module.exports = { sendEmail };
-

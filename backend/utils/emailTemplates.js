@@ -133,7 +133,7 @@ function adminOtpTemplate({ username, otp, expiresInMinutes }) {
       <p>If you did not request this, ignore this message and rotate admin credentials immediately.</p>
     `,
     actionLabel: 'Open Admin Login',
-    actionUrl: `${process.env.PUBLIC_SITE_URL || 'http://localhost:5173'}${process.env.VITE_ADMIN_LOGIN_PATH || '/control-room-access'}`
+    actionUrl: `${process.env.PUBLIC_SITE_URL || 'http://localhost:5173'}${process.env.VITE_ADMIN_LOGIN_PATH || '/admin/login'}`
   });
 }
 

@@ -1,8 +1,7 @@
-import { Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import logo from '../../assets/telente-logo.svg';
 
-const imgBackground =
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80';
+const imgBackground = '/images/news-gateway.jpg';
 
 export function Footer() {
   return (
@@ -31,7 +30,7 @@ export function Footer() {
                 <Phone className="w-5 h-5 text-[#1b75bc]" />
                 <div>
                   <span className="font-bold text-[#2e4049]">Hotline: </span>
-                  <span className="text-[#2e4049]">078.777.6666</span>
+                  <span className="text-[#2e4049]">+234 201 330 0045</span>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -39,7 +38,7 @@ export function Footer() {
                 <div>
                   <span className="font-bold text-[#2e4049]">Address: </span>
                   <span className="text-[#2e4049]">
-                    28C Le Truc, Ward 7, Binh Thanh District, Ho Chi Minh City
+                    12B Admiralty Way, Lekki Phase 1, Lagos, Nigeria
                   </span>
                 </div>
               </div>
@@ -60,16 +59,31 @@ export function Footer() {
             </h3>
             <div className="flex gap-4">
               <a
-                href="https://facebook.com"
+                href="https://www.linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
+                aria-label="LinkedIn"
               >
-                <Facebook className="w-10 h-10 text-[#1877F2]" fill="#1877F2" />
+                <div className="w-10 h-10 bg-[#0A66C2] rounded-full flex items-center justify-center">
+                  <Linkedin className="w-5 h-5 text-white" />
+                </div>
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-80 transition-opacity"
+                aria-label="Instagram"
+              >
+                <div className="w-10 h-10 bg-[#E4405F] rounded-full flex items-center justify-center">
+                  <Instagram className="w-5 h-5 text-white" />
+                </div>
               </a>
               <a
                 href="mailto:contact@telentelogistics.com"
                 className="hover:opacity-80 transition-opacity"
+                aria-label="Email"
               >
                 <div className="w-10 h-10 bg-[#EA5A47] rounded-full flex items-center justify-center">
                   <Mail className="w-6 h-6 text-white" />

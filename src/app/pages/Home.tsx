@@ -1,271 +1,190 @@
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import { Star, PiggyBank, Box, Clock, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router';
-import logo from '../../assets/telente-logo.svg';
+import { ArrowRight, CheckCircle2, Globe2, MapPinned, ShieldCheck, Timer } from 'lucide-react';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
-const imgHero =
-  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80';
-const imgTestimonialBg =
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80';
-const imgTestimonialAvatar =
-  'https://images.unsplash.com/photo-1586528116663-7f3f66f6cf6b?auto=format&fit=crop&w=240&q=80';
+const trustStats = [
+  { label: 'Shipments per Month', value: '45,000+' },
+  { label: 'States Covered', value: '36 + FCT' },
+  { label: 'On-Time Dispatch', value: '98.7%' },
+  { label: 'Enterprise Clients', value: '520+' },
+];
+
+const serviceHighlights = [
+  {
+    title: 'Nationwide Distribution',
+    text: 'Daily line-haul operations connecting Lagos, Abuja, Kano, Port Harcourt, and regional hubs.',
+  },
+  {
+    title: 'International Freight',
+    text: 'Sea and air freight solutions for importers, exporters, and cross-border e-commerce operations.',
+  },
+  {
+    title: 'Secure Warehousing',
+    text: 'Structured storage, inventory controls, and fast dispatch workflows for growth-stage businesses.',
+  },
+];
+
+const operationalPillars = [
+  {
+    icon: Timer,
+    title: 'Speed with Control',
+    description: 'Clear dispatch timelines and route-level visibility across every shipment stage.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Compliance-First Operations',
+    description: 'Documented handling, customs support, and reliable proof of delivery standards.',
+  },
+  {
+    icon: Globe2,
+    title: 'Global Trade Reach',
+    description: 'From Nigerian ports and airports to key international delivery destinations.',
+  },
+  {
+    icon: MapPinned,
+    title: 'Deep Local Coverage',
+    description: 'Dedicated last-mile delivery teams in strategic commercial and industrial zones.',
+  },
+];
 
 export default function Home() {
-  const benefits = [
-    {
-      icon: Star,
-      title: 'Diverse Services',
-      description: 'High quality services',
-    },
-    {
-      icon: Shield,
-      title: 'End-to-End Transport',
-      description: 'No intermediaries',
-    },
-    {
-      icon: PiggyBank,
-      title: 'Optimal Costs',
-      description: 'Efficient and effective',
-    },
-    {
-      icon: Box,
-      title: 'Safe Goods',
-      description: 'Always guaranteed',
-    },
-    {
-      icon: Clock,
-      title: 'Fast Delivery',
-      description: 'Only 5-7 days worldwide',
-    },
-    {
-      icon: Users,
-      title: 'Trusted Partners',
-      description: 'Reliable and customer-approved',
-    },
-  ];
-
-  const partners = [logo, logo, logo, logo];
-
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen bg-white text-[#1d2a33]">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="relative h-[687px] mt-[65px] overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={imgHero}
-            alt="Hero Background"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-[60px] flex items-center h-full">
-          <div className="text-black max-w-3xl">
-            <h1 className="text-5xl font-bold mb-4 leading-tight">
-              TELENTE LOGISTICS
-            </h1>
-            <h2 className="text-4xl mb-2">
-              CONNECTING YOUR BUSINESS
-            </h2>
-            <h2 className="text-4xl">
-              TO EVERYWHERE
-            </h2>
-          </div>
-        </div>
-      </section>
 
-      {/* About Section */}
-      <section className="py-20 max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="bg-[#d9d9d9] h-[499px] rounded-lg"></div>
-          <div>
-            <h2 className="text-4xl font-bold text-[#324048] mb-6">ABOUT US</h2>
-            <div className="h-1 w-[220px] bg-[#336FB3] mb-6"></div>
-            <p className="text-lg text-gray-700 mb-4">
-              Telente Logistics is a leading provider of comprehensive logistics solutions,
-              committed to delivering excellence in every shipment.
-            </p>
-            <p className="text-lg text-gray-700 mb-6">
-              With years of experience and a global network, we ensure your goods reach
-              their destination safely, efficiently, and on time.
-            </p>
-            <Link
-              to="/about"
-              className="text-[#1b75bc] font-bold text-lg hover:underline"
-            >
-              Learn More {'->'}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-8">
-          <h2 className="text-4xl font-bold text-[#324048] text-center mb-4">
-            FEATURED SERVICES
-          </h2>
-          <div className="h-1 w-[220px] bg-[#336FB3] mx-auto mb-12"></div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              'Air Freight',
-              'Sea Freight',
-              'Land Transport',
-              'Warehousing',
-            ].map((service, index) => (
-              <div key={index} className="bg-[#d9d9d9] h-[585px] rounded-lg"></div>
-            ))}
-          </div>
-          
-          <div className="text-center mt-8">
-            <Link
-              to="/services"
-              className="text-[#1b75bc] font-bold text-lg hover:underline"
-            >
-              View All Services {'->'}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 max-w-7xl mx-auto px-8">
-        <h2 className="text-4xl font-bold text-black text-center mb-4">
-          WHY CHOOSE TELENTE LOGISTICS
-        </h2>
-        <div className="h-1 w-[220px] bg-[#336FB3] mx-auto mb-12"></div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((benefit, index) => (
-            <div
-              key={index}
-              className="bg-[#a5e3f6] bg-opacity-40 rounded-[30px] p-8 text-center"
-            >
-              <benefit.icon className="w-20 h-20 mx-auto mb-6 text-[#2E4049]" />
-              <h3 className="text-2xl font-bold text-black mb-2">
-                {benefit.title}
-              </h3>
-              <p className="text-xl text-black">{benefit.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Partners Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-8">
-          <h2 className="text-4xl font-bold text-black text-center mb-4">
-            OUR PARTNERS
-          </h2>
-          <div className="h-1 w-[220px] bg-[#336FB3] mx-auto mb-12"></div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {partners.map((partner, index) => (
-              <div key={index} className="w-[220px] h-[220px] flex items-center justify-center">
-                <img src={partner} alt={`Partner ${index + 1}`} className="max-w-full max-h-full" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonial Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <img
-            src={imgTestimonialBg}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </div>
-        
-        <div className="relative max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-[#fafafa] mb-4">
-                AUTHENTIC FEEDBACK
-              </h2>
-              <h3 className="text-3xl text-[#fafafa]">FROM OUR CLIENTS</h3>
-            </div>
-            
-            <div className="bg-[rgba(83,170,222,0.5)] rounded-[30px] p-8">
-              <div className="flex items-start gap-6 mb-6">
-                <img
-                  src={imgTestimonialAvatar}
-                  alt="Customer"
-                  className="w-24 h-24 rounded-full"
-                />
-                <div>
-                  <h4 className="text-3xl font-bold text-white mb-2">
-                    Sarah Johnson
-                  </h4>
-                  <div className="h-px w-[220px] bg-[#336FB3] mb-2"></div>
-                  <p className="text-xl text-white">
-                    Warehouse Manager at XYZ Company
-                  </p>
-                </div>
-              </div>
-              <p className="text-xl text-white text-justify">
-                "Thank you Telente Logistics for accompanying us and transporting
-                our shipments carefully, thoughtfully, and always on time."
+      <main className="pt-[85px]">
+        <section className="bg-gradient-to-br from-[#f4fbff] via-[#eef6ff] to-white">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
+            <div className="flex flex-col justify-center">
+              <p className="mb-4 inline-flex w-fit items-center rounded-full border border-[#b6d8f6] bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#1b75bc]">
+                Nigeria Built. Globally Connected.
               </p>
+              <h1 className="text-4xl font-bold leading-tight text-[#21313b] sm:text-5xl">
+                Logistics Infrastructure for Serious Businesses
+              </h1>
+              <p className="mt-5 max-w-xl text-lg text-[#4a5a66]">
+                Telente Logistics helps companies move cargo, inventory, and customer orders across Nigeria and international routes with speed, visibility, and discipline.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  to="/tracking"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#1b75bc] px-6 py-3 font-bold text-white transition-colors hover:bg-[#155a94]"
+                >
+                  Track Shipment
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/contact"
+                  className="rounded-full border border-[#d0deeb] bg-white px-6 py-3 font-bold text-[#2d3d49] transition-colors hover:bg-[#f5f9fc]"
+                >
+                  Request Quote
+                </Link>
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-3xl border border-[#dde8f3] bg-white shadow-sm">
+              <ImageWithFallback
+                src="/images/hero-logistics.jpg"
+                alt="Telente logistics operations"
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* News Section */}
-      <section className="py-20 max-w-7xl mx-auto px-8">
-        <h2 className="text-4xl font-bold text-black text-center mb-4">
-          LATEST NEWS
-        </h2>
-        <div className="h-1 w-[220px] bg-[#336FB3] mx-auto mb-12"></div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="col-span-2 bg-[#d9d9d9] h-[370px] rounded-lg"></div>
-          <div className="space-y-8">
-            <div className="bg-[#d9d9d9] h-[162px] rounded-lg"></div>
-            <div className="bg-[#d9d9d9] h-[162px] rounded-lg"></div>
+        <section className="border-y border-[#e8eef5] bg-white py-8">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
+            {trustStats.map((item) => (
+              <div key={item.label} className="text-center">
+                <p className="text-2xl font-bold text-[#1b75bc]">{item.value}</p>
+                <p className="text-sm text-[#5f6d78]">{item.label}</p>
+              </div>
+            ))}
           </div>
-        </div>
-        
-        <div className="text-center mt-8">
-          <Link
-            to="/news"
-            className="text-[#1b75bc] font-bold text-lg hover:underline"
-          >
-            View All News {'->'}
-          </Link>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-[#1b75bc]">
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Ship with Us?
-          </h2>
-          <p className="text-xl text-white mb-8">
-            Get started today and experience world-class logistics services
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              to="/contact"
-              className="bg-white text-[#1b75bc] px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors"
-            >
-              Contact Us
-            </Link>
-            <Link
-              to="/tracking"
-              className="bg-[#2E4049] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#1f2c32] transition-colors"
-            >
-              Track Your Package
-            </Link>
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col gap-3 text-center">
+            <h2 className="text-3xl font-bold text-[#22323d] sm:text-4xl">What We Deliver</h2>
+            <p className="mx-auto max-w-2xl text-[#5f6d78]">
+              Integrated logistics services built to support imports, exports, nationwide distribution, and e-commerce fulfillment.
+            </p>
           </div>
-        </div>
-      </section>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {serviceHighlights.map((item) => (
+              <article key={item.title} className="rounded-2xl border border-[#e1e9f2] bg-[#f9fcff] p-6">
+                <h3 className="text-xl font-bold text-[#263945]">{item.title}</h3>
+                <p className="mt-3 text-[#5b6975]">{item.text}</p>
+                <Link to="/services" className="mt-5 inline-flex items-center gap-2 font-bold text-[#1b75bc] hover:underline">
+                  Explore Services
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-[#f4f8fc] py-16">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+            <div>
+              <h2 className="text-3xl font-bold text-[#22323d] sm:text-4xl">Operational Excellence at Scale</h2>
+              <p className="mt-4 text-[#5b6975]">
+                We combine disciplined operations, experienced field teams, and practical technology to keep your supply chain dependable from pickup to final delivery.
+              </p>
+              <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {operationalPillars.map((pillar) => (
+                  <div key={pillar.title} className="rounded-xl border border-[#dde8f3] bg-white p-5">
+                    <pillar.icon className="h-6 w-6 text-[#1b75bc]" />
+                    <h3 className="mt-3 font-bold text-[#22323d]">{pillar.title}</h3>
+                    <p className="mt-2 text-sm text-[#60707c]">{pillar.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-[#dde8f3] bg-white p-8">
+              <h3 className="text-2xl font-bold text-[#22323d]">Why Leading Teams Choose Telente</h3>
+              <ul className="mt-6 space-y-4">
+                {[
+                  'Dedicated account managers for enterprise customers',
+                  'Real-time shipment milestones and escalation workflows',
+                  'Integrated line-haul, storage, and last-mile services',
+                  'Focused support for Nigerian and international trade flows',
+                ].map((point) => (
+                  <li key={point} className="flex items-start gap-3 text-[#4f5e6b]">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#1b75bc]" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 rounded-2xl bg-[#1b75bc] p-6 text-white">
+                <p className="text-sm uppercase tracking-[0.15em] text-blue-100">Head Office</p>
+                <p className="mt-1 font-bold">12B Admiralty Way, Lekki Phase 1, Lagos</p>
+                <p className="mt-2 text-blue-50">Customer Desk: +234 201 330 0045</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="rounded-3xl bg-gradient-to-r from-[#1b75bc] to-[#2f6fb2] px-6 py-10 text-center text-white sm:px-10">
+            <h2 className="text-3xl font-bold sm:text-4xl">Ready to Upgrade Your Logistics Performance?</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-blue-50">
+              Let us build a logistics plan aligned to your volume, timelines, and service-level expectations.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to="/contact" className="rounded-full bg-white px-6 py-3 font-bold text-[#1b75bc] hover:bg-[#f0f6ff]">
+                Talk to Our Team
+              </Link>
+              <Link to="/about" className="rounded-full border border-white/50 px-6 py-3 font-bold text-white hover:bg-white/10">
+                Learn About Telente
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>

@@ -55,7 +55,7 @@ export default function ServiceDetail() {
           <div className="max-w-4xl mx-auto px-8 text-center">
             <h1 className="text-4xl font-bold text-[#324048] mb-4">{error || 'Service not found'}</h1>
             <Link to="/services" className="text-[#1b75bc] font-bold hover:underline">
-              ← Back to Services
+              Back to Services
             </Link>
           </div>
         </main>

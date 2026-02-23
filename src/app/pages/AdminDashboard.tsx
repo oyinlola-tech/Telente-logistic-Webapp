@@ -955,7 +955,7 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
                   type="email"
                   value={formData.senderEmail}
                   onChange={(e) => updateField('senderEmail', e.target.value)}
-                  placeholder="sender@example.com"
+                  placeholder="sender@company.ng"
                   className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
                 />
               </div>
@@ -1013,7 +1013,7 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
                   type="email"
                   value={formData.recipientEmail}
                   onChange={(e) => updateField('recipientEmail', e.target.value)}
-                  placeholder="recipient@example.com"
+                  placeholder="recipient@company.ng"
                   className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
                 />
               </div>
@@ -1128,7 +1128,7 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
                     type="text"
                     value={formData.currentLocation}
                     onChange={(e) => updateField('currentLocation', e.target.value)}
-                    placeholder="e.g., Chicago Distribution Center"
+                  placeholder="e.g., Ikeja Distribution Center"
                     className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
                   />
                 </div>

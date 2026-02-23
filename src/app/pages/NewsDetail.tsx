@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { newsApi, NewsArticle } from '../utils/api';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -48,7 +49,7 @@ export default function NewsDetail() {
         ) : (
           <article className="max-w-5xl mx-auto px-8">
             <div className="rounded-2xl overflow-hidden h-[420px] bg-gray-200 mb-8">
-              <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+              <ImageWithFallback src={article.image} alt={article.title} className="w-full h-full object-cover" />
             </div>
             <div className="flex items-center gap-6 text-gray-600 mb-4">
               <div className="flex items-center gap-2">

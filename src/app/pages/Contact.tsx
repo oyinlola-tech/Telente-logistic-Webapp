@@ -76,8 +76,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-[#324048] mb-1">Phone</h3>
-                    <p className="text-gray-700">Hotline: 078.777.6666</p>
-                    <p className="text-sm text-gray-600">Monday - Friday: 8:00 AM - 6:00 PM</p>
+                    <p className="text-gray-700">Hotline: +234 201 330 0045</p>
+                    <p className="text-sm text-gray-600">Monday - Friday: 8:00 AM - 6:00 PM (WAT)</p>
                   </div>
                 </div>
 
@@ -99,17 +99,23 @@ export default function Contact() {
                   <div>
                     <h3 className="text-xl font-bold text-[#324048] mb-1">Address</h3>
                     <p className="text-gray-700">
-                      28C Le Truc, Ward 7<br />
-                      Binh Thanh District<br />
-                      Ho Chi Minh City
+                      12B Admiralty Way<br />
+                      Lekki Phase 1<br />
+                      Lagos, Nigeria
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="mt-8 bg-gray-200 rounded-xl h-[300px] flex items-center justify-center">
-                <p className="text-gray-500">Map View</p>
+              {/* Office Location Map */}
+              <div className="mt-8 h-[300px] overflow-hidden rounded-xl border border-gray-200">
+                <iframe
+                  title="Telente Logistics Lagos Office"
+                  src="https://www.google.com/maps?q=12B%20Admiralty%20Way%2C%20Lekki%20Phase%201%2C%20Lagos%2C%20Nigeria&output=embed"
+                  className="h-full w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
             </div>
 
@@ -160,7 +166,7 @@ export default function Contact() {
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc] transition-colors"
-                      placeholder="+1234567890"
+                      placeholder="+2348012345678"
                     />
                   </div>
 
@@ -228,7 +234,7 @@ export default function Contact() {
               <div className="bg-white rounded-xl p-8 shadow-sm">
                 <div className="space-y-4">
                   {[
-                    { day: 'Monday - Friday', hours: '8:00 AM - 6:00 PM' },
+                    { day: 'Monday - Friday', hours: '8:00 AM - 6:00 PM (WAT)' },
                     { day: 'Saturday', hours: '9:00 AM - 3:00 PM' },
                     { day: 'Sunday', hours: 'Closed' },
                     { day: 'Public Holidays', hours: 'Closed' },

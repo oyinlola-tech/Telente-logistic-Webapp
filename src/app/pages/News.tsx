@@ -4,6 +4,7 @@ import { Calendar, User, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
 import { newsApi, newsletterApi, NewsArticle } from '../utils/api';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 export default function News() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -71,7 +72,7 @@ export default function News() {
               <section className="py-20 max-w-7xl mx-auto px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div className="bg-gray-200 rounded-2xl h-[400px] overflow-hidden">
-                    <img
+                    <ImageWithFallback
                       src={featuredNews.image}
                       alt={featuredNews.title}
                       className="w-full h-full object-cover"
@@ -114,7 +115,7 @@ export default function News() {
                       className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                     >
                       <div className="bg-gray-200 h-[200px] overflow-hidden">
-                        <img
+                        <ImageWithFallback
                           src={article.image}
                           alt={article.title}
                           className="w-full h-full object-cover"

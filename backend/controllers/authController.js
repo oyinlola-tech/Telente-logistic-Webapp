@@ -13,6 +13,10 @@ const OTP_RESEND_SECONDS = Number(process.env.ADMIN_OTP_RESEND_SECONDS || 60);
 const OTP_MAX_ATTEMPTS = Number(process.env.ADMIN_OTP_MAX_ATTEMPTS || 5);
 const RESET_EXPIRES_MINUTES = Number(process.env.ADMIN_RESET_EXPIRES_MINUTES || 30);
 
+function shouldExposeDevOtp() {
+  return String(process.env.ADMIN_EXPOSE_DEV_OTP).toLowerCase() === 'true';
+}
+
 function isValidPassword(value) {
   if (typeof value !== 'string') return false;
   if (value.length < 8 || value.length > 128) return false;
@@ -131,7 +135,7 @@ const login = async (req, res) => {
       }
     };
 
-    if (String(process.env.NODE_ENV).toLowerCase() !== 'production') {
+    if (String(process.env.NODE_ENV).toLowerCase() !== 'production' && shouldExposeDevOtp()) {
       response.data.devOtp = otpResult.otp;
     }
 
@@ -273,7 +277,7 @@ const resendOtp = async (req, res) => {
       data: { expiresAt: otpResult.expiresAt }
     };
 
-    if (String(process.env.NODE_ENV).toLowerCase() !== 'production') {
+    if (String(process.env.NODE_ENV).toLowerCase() !== 'production' && shouldExposeDevOtp()) {
       response.data.devOtp = otpResult.otp;
     }
 

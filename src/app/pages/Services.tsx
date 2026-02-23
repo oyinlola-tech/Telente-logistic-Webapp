@@ -37,50 +37,50 @@ export default function Services() {
   }, []);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="pt-[85px] pb-20">
+      <main className="pb-20 pt-[85px]">
         <section className="bg-gradient-to-r from-[#1b75bc] to-[#336FB3] py-20">
-          <div className="max-w-7xl mx-auto px-8 text-center text-white">
-            <h1 className="text-5xl font-bold mb-4">Our Services</h1>
-            <p className="text-xl max-w-3xl mx-auto">
-              Comprehensive logistics solutions tailored to your shipping needs.
+          <div className="mx-auto max-w-7xl px-4 text-center text-white sm:px-6 lg:px-8">
+            <h1 className="mb-4 text-4xl font-bold sm:text-5xl">Our Services</h1>
+            <p className="mx-auto max-w-3xl text-lg sm:text-xl">
+              End-to-end logistics capabilities tailored for high-performance supply chains.
             </p>
           </div>
         </section>
 
-        <section className="py-20 max-w-7xl mx-auto px-8">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           {loading ? (
             <p className="text-center text-gray-600">Loading services...</p>
           ) : error ? (
             <p className="text-center text-red-600">{error}</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {services.map((service) => {
                 const Icon = iconMap[service.icon] || Package;
                 return (
-                  <div
+                  <article
                     key={service.id}
-                    className="bg-white border-2 border-gray-200 rounded-xl p-8 hover:border-[#1b75bc] hover:shadow-lg transition-all"
+                    className="rounded-xl border border-gray-200 bg-white p-8 transition-all hover:border-[#1b75bc] hover:shadow-lg"
                   >
-                    <div className="w-16 h-16 bg-[#a5e3f6] bg-opacity-40 rounded-full flex items-center justify-center mb-6">
-                      <Icon className="w-8 h-8 text-[#1b75bc]" />
+                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#a5e3f6]/40">
+                      <Icon className="h-8 w-8 text-[#1b75bc]" />
                     </div>
-                    <h3 className="text-2xl font-bold text-[#324048] mb-3">{service.title}</h3>
-                    <p className="text-gray-700 mb-6">{service.description}</p>
-                    <ul className="space-y-2 mb-6">
+                    <h3 className="mb-3 text-2xl font-bold text-[#324048]">{service.title}</h3>
+                    <p className="mb-6 text-gray-700">{service.description}</p>
+                    <ul className="mb-6 space-y-2">
                       {service.features.slice(0, 4).map((feature, index) => (
                         <li key={index} className="flex items-start gap-2 text-gray-600">
-                          <span className="text-[#1b75bc] mt-1">•</span>
+                          <span className="mt-1 text-[#1b75bc]">-</span>
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
-                    <Link to={`/services/${service.id}`} className="text-[#1b75bc] font-bold hover:underline">
-                      Learn More →
+                    <Link to={`/services/${service.id}`} className="font-bold text-[#1b75bc] hover:underline">
+                      Learn More {'->'}
                     </Link>
-                  </div>
+                  </article>
                 );
               })}
             </div>
