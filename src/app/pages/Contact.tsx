@@ -13,19 +13,29 @@ export default function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.service.trim()) {
+      setErrorMessage('Please complete all required fields.');
+      return;
+    }
     setLoading(true);
 
     try {
-      await contactApi.submit(formData);
+      await contactApi.submit({
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        service: formData.service.trim(),
+        message: formData.message.trim(),
+      });
       setSubmitted(true);
       setFormData({ name: '', phone: '', service: '', message: '' });
       setTimeout(() => setSubmitted(false), 5000);
     } catch (error) {
-      console.error('Failed to submit contact form:', error);
-      alert('Failed to submit form. This is a demo - connect your backend to enable this feature.');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to submit contact form.');
     } finally {
       setLoading(false);
     }
@@ -121,6 +131,11 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {errorMessage ? (
+                    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      {errorMessage}
+                    </div>
+                  ) : null}
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">
                       Full Name *

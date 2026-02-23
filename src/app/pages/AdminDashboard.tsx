@@ -1,6 +1,6 @@
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Package,
@@ -57,6 +57,23 @@ export default function AdminDashboard() {
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [actionError, setActionError] = useState('');
+  const [actionSuccess, setActionSuccess] = useState('');
+
+  const parseErrorMessage = (error: unknown, fallback: string) =>
+    error instanceof Error ? error.message : fallback;
+
+  const handleUnauthorized = useCallback(
+    (error: unknown) => {
+      if (error instanceof Error && /token|unauthorized|expired|forbidden/i.test(error.message)) {
+        authApi.logout();
+        navigate(ADMIN_LOGIN_PATH);
+        return true;
+      }
+      return false;
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -67,9 +84,7 @@ export default function AdminDashboard() {
 
       try {
         await authApi.me();
-        fetchPackages();
-        fetchJobs();
-        fetchApplications();
+        await Promise.all([fetchPackages(), fetchJobs()]);
       } catch (error) {
         authApi.logout();
         navigate(ADMIN_LOGIN_PATH);
@@ -77,9 +92,9 @@ export default function AdminDashboard() {
     };
 
     bootstrap();
-  }, [currentPage, statusFilter, navigate]);
+  }, [navigate]);
 
-  const fetchPackages = async () => {
+  const fetchPackages = useCallback(async () => {
     setLoading(true);
     try {
       const params: any = { page: currentPage, limit: 10 };
@@ -90,15 +105,18 @@ export default function AdminDashboard() {
       setPackages(data.packages);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error('Failed to fetch packages:', error);
-      if (error instanceof Error && /token|unauthorized/i.test(error.message)) {
-        authApi.logout();
-        navigate(ADMIN_LOGIN_PATH);
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to load packages'));
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, statusFilter, handleUnauthorized]);
+
+  useEffect(() => {
+    if (!authApi.getToken()) return;
+    fetchPackages();
+  }, [fetchPackages]);
 
   const fetchJobs = async () => {
     setJobsLoading(true);
@@ -106,13 +124,13 @@ export default function AdminDashboard() {
       const response = await careerApi.getAll();
       setJobs(response);
     } catch (error) {
-      console.error('Failed to fetch jobs:', error);
+      setActionError(parseErrorMessage(error, 'Failed to load jobs'));
     } finally {
       setJobsLoading(false);
     }
   };
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     setApplicationsLoading(true);
     try {
       const result = await careerApi.adminGetApplications({
@@ -130,20 +148,24 @@ export default function AdminDashboard() {
       );
       setApplicationTotalPages(result.totalPages);
     } catch (error) {
-      console.error('Failed to fetch applications:', error);
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to load applications'));
+      }
     } finally {
       setApplicationsLoading(false);
     }
-  };
+  }, [applicationPage, applicationSearch, applicationJobFilter, handleUnauthorized]);
 
   const handleCreatePackage = async (data: CreatePackageData) => {
     try {
       await packageApi.create(data);
       setShowCreateModal(false);
-      fetchPackages();
+      setActionSuccess('Package created successfully.');
+      await fetchPackages();
     } catch (error) {
-      console.error('Failed to create package:', error);
-      alert('Failed to create package. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to create package.'));
+      }
     }
   };
 
@@ -152,22 +174,26 @@ export default function AdminDashboard() {
       await packageApi.update(id, data);
       setShowEditModal(false);
       setSelectedPackage(null);
-      fetchPackages();
+      setActionSuccess('Package updated successfully.');
+      await fetchPackages();
     } catch (error) {
-      console.error('Failed to update package:', error);
-      alert('Failed to update package. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to update package.'));
+      }
     }
   };
 
   const handleDeletePackage = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this package?')) return;
+    if (!window.confirm('Are you sure you want to delete this package?')) return;
     
     try {
       await packageApi.delete(id);
-      fetchPackages();
+      setActionSuccess('Package deleted successfully.');
+      await fetchPackages();
     } catch (error) {
-      console.error('Failed to delete package:', error);
-      alert('Failed to delete package. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to delete package.'));
+      }
     }
   };
 
@@ -175,10 +201,12 @@ export default function AdminDashboard() {
     try {
       await careerApi.adminCreate(data);
       setShowCreateJobModal(false);
-      fetchJobs();
+      setActionSuccess('Job created successfully.');
+      await fetchJobs();
     } catch (error) {
-      console.error('Failed to create job:', error);
-      alert('Failed to create job. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to create job.'));
+      }
     }
   };
 
@@ -187,21 +215,25 @@ export default function AdminDashboard() {
       await careerApi.adminUpdate(id, data);
       setShowEditJobModal(false);
       setSelectedJob(null);
-      fetchJobs();
+      setActionSuccess('Job updated successfully.');
+      await fetchJobs();
     } catch (error) {
-      console.error('Failed to update job:', error);
-      alert('Failed to update job. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to update job.'));
+      }
     }
   };
 
   const handleDeleteJob = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this job?')) return;
+    if (!window.confirm('Are you sure you want to delete this job?')) return;
     try {
       await careerApi.adminDelete(id);
-      fetchJobs();
+      setActionSuccess('Job deleted successfully.');
+      await fetchJobs();
     } catch (error) {
-      console.error('Failed to delete job:', error);
-      alert('Failed to delete job. Please verify your session and try again.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to delete job.'));
+      }
     }
   };
 
@@ -211,10 +243,12 @@ export default function AdminDashboard() {
     setApplicationStatusSaving((prev) => ({ ...prev, [applicationId]: true }));
     try {
       await careerApi.adminUpdateApplicationStatus(applicationId, nextStatus);
-      fetchApplications();
+      setActionSuccess('Application status updated.');
+      await fetchApplications();
     } catch (error) {
-      console.error('Failed to update application status:', error);
-      alert('Failed to update application status.');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to update application status.'));
+      }
     } finally {
       setApplicationStatusSaving((prev) => ({ ...prev, [applicationId]: false }));
     }
@@ -235,15 +269,16 @@ export default function AdminDashboard() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export applications CSV:', error);
-      alert('Failed to export CSV');
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to export CSV.'));
+      }
     }
   };
 
   useEffect(() => {
     if (!authApi.getToken()) return;
     fetchApplications();
-  }, [applicationSearch, applicationJobFilter, applicationPage]);
+  }, [fetchApplications]);
 
   const filteredPackages = packages.filter((pkg) =>
     pkg.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -291,6 +326,16 @@ export default function AdminDashboard() {
               Admin Dashboard
             </h1>
             <p className="text-gray-600">Manage packages and tracking information</p>
+            {actionError ? (
+              <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {actionError}
+              </div>
+            ) : null}
+            {actionSuccess ? (
+              <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                {actionSuccess}
+              </div>
+            ) : null}
           </div>
 
           {/* Stats */}
@@ -749,7 +794,7 @@ interface PackageModalProps {
   mode: 'create' | 'edit';
   package?: PackageType;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: CreatePackageData | UpdatePackageData) => void;
 }
 
 function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalProps) {
@@ -769,10 +814,51 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
     currentLocation: pkg?.currentLocation || '',
     estimatedDelivery: pkg?.estimatedDelivery || '',
   });
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    const senderName = formData.senderName.trim();
+    const senderPhone = formData.senderPhone.trim();
+    const senderAddress = formData.senderAddress.trim();
+    const recipientName = formData.recipientName.trim();
+    const recipientPhone = formData.recipientPhone.trim();
+    const recipientAddress = formData.recipientAddress.trim();
+    const dimensions = formData.dimensions.trim();
+    const service = formData.service.trim();
+
+    if (
+      !senderName ||
+      !senderPhone ||
+      !senderAddress ||
+      !recipientName ||
+      !recipientPhone ||
+      !recipientAddress ||
+      !dimensions ||
+      !service ||
+      !formData.estimatedDelivery
+    ) {
+      setFormError('Please complete all required fields.');
+      return;
+    }
+
+    if (!Number.isFinite(formData.weight) || Number(formData.weight) <= 0) {
+      setFormError('Weight must be a positive number.');
+      return;
+    }
+
+    setFormError('');
+    onSubmit({
+      ...formData,
+      senderName,
+      senderPhone,
+      senderAddress,
+      recipientName,
+      recipientPhone,
+      recipientAddress,
+      dimensions,
+      service
+    });
   };
 
   const updateField = (field: string, value: any) => {
@@ -795,6 +881,11 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {formError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {formError}
+            </div>
+          ) : null}
           {/* Sender Information */}
           <div>
             <h3 className="text-xl font-bold text-[#324048] mb-4 flex items-center gap-2">
@@ -1054,21 +1145,38 @@ function JobModal({ mode, job, onClose, onSubmit }: JobModalProps) {
     description: job?.description || '',
     requirementsText: (job?.requirements || []).join('\n'),
   });
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const title = formData.title.trim();
+    const department = formData.department.trim();
+    const location = formData.location.trim();
+    const type = formData.type.trim();
+    const description = formData.description.trim();
     const requirements = formData.requirementsText
       .split('\n')
       .map((item) => item.trim())
       .filter(Boolean);
 
+    if (!title || !department || !location || !type || !description) {
+      setFormError('Please complete all required fields.');
+      return;
+    }
+
+    if (!requirements.length) {
+      setFormError('Provide at least one requirement.');
+      return;
+    }
+
+    setFormError('');
     onSubmit({
-      title: formData.title.trim(),
-      department: formData.department.trim(),
-      location: formData.location.trim(),
-      type: formData.type.trim(),
+      title,
+      department,
+      location,
+      type,
       salary: formData.salary.trim(),
-      description: formData.description.trim(),
+      description,
       requirements,
     });
   };
@@ -1090,6 +1198,11 @@ function JobModal({ mode, job, onClose, onSubmit }: JobModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {formError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {formError}
+            </div>
+          ) : null}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Title *</label>

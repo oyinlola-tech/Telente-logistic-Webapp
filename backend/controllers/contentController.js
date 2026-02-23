@@ -75,8 +75,8 @@ const getServiceById = async (req, res) => {
 
 const getNews = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
-  const parsedPage = Number(page);
-  const parsedLimit = Number(limit);
+  const parsedPage = Number(page) > 0 ? Number(page) : 1;
+  const parsedLimit = Number(limit) > 0 && Number(limit) <= 50 ? Number(limit) : 10;
   const start = (parsedPage - 1) * parsedLimit;
   const paginated = news.slice(start, start + parsedLimit);
 
@@ -117,29 +117,29 @@ const getJobs = async (req, res) => {
 
 const applyToJob = async (req, res) => {
   const jobId = sanitizeText(req.params.id, 120);
-  const job = await Job.findById(jobId);
-
-  if (!job) {
-    return res.status(404).json({
-      success: false,
-      error: { message: 'Job not found', code: 'NOT_FOUND' }
-    });
-  }
-
-  const name = sanitizeText(req.body?.name, 255);
-  const email = sanitizeEmail(req.body?.email);
-  const phone = sanitizePhone(req.body?.phone);
-  const coverLetter = sanitizeMultiline(req.body?.coverLetter, 5000);
-  const resumeFileName = sanitizeFilename(req.body?.resumeFileName);
-
-  if (!name || !email || !phone) {
-    return res.status(400).json({
-      success: false,
-      error: { message: 'Name, valid email, and phone are required', code: 'BAD_REQUEST' }
-    });
-  }
-
   try {
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Job not found', code: 'NOT_FOUND' }
+      });
+    }
+
+    const name = sanitizeText(req.body?.name, 255);
+    const email = sanitizeEmail(req.body?.email);
+    const phone = sanitizePhone(req.body?.phone);
+    const coverLetter = sanitizeMultiline(req.body?.coverLetter, 5000);
+    const resumeFileName = sanitizeFilename(req.body?.resumeFileName);
+
+    if (!name || !email || !phone) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Name, valid email, and phone are required', code: 'BAD_REQUEST' }
+      });
+    }
+
     const applicationId = await CareerApplication.create({
       jobId,
       jobTitle: job.title,
@@ -343,7 +343,7 @@ const createJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  const { id } = req.params;
+  const id = sanitizeText(req.params.id, 120);
   const payload = req.body || {};
 
   const updateFields = {

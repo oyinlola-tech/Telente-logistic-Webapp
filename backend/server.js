@@ -14,6 +14,7 @@ const requestSecurity = require('./middleware/requestSecurity');
 const app = express();
 
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173')
   .split(',')
@@ -74,7 +75,11 @@ app.use((err, req, res, next) => {
       error: { message: 'Origin not allowed', code: 'FORBIDDEN' }
     });
   }
-  return next(err);
+  console.error('Unhandled middleware error:', err);
+  return res.status(500).json({
+    success: false,
+    error: { message: 'Internal server error', code: 'SERVER_ERROR' }
+  });
 });
 
 app.use((req, res) => {
@@ -92,3 +97,11 @@ ensureDatabaseAndSeedAdmin()
     console.error('Failed to initialize database:', error);
     process.exit(1);
   });
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+});

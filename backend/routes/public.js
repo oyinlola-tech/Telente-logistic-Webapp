@@ -1,8 +1,28 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const Package = require('../models/Package');
 const { submitContact } = require('../controllers/contactController');
+const { sanitizeText } = require('../utils/security');
 
 const router = express.Router();
+
+const trackingLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: { message: 'Too many contact requests. Please try again later.', code: 'RATE_LIMITED' }
+  }
+});
 
 const mapPackageToResponse = (pkg, trackingHistory = []) => ({
   id: pkg.id,
@@ -31,8 +51,14 @@ const mapPackageToResponse = (pkg, trackingHistory = []) => ({
 });
 
 // Tracking - public
-router.get('/packages/track/:trackingNumber', async (req, res) => {
-  const { trackingNumber } = req.params;
+router.get('/packages/track/:trackingNumber', trackingLimiter, async (req, res) => {
+  const trackingNumber = sanitizeText(req.params.trackingNumber, 50).toUpperCase();
+  if (!trackingNumber) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'Tracking number is required', code: 'BAD_REQUEST' }
+    });
+  }
   try {
     const pkg = await Package.findByTrackingNumber(trackingNumber);
     if (!pkg) {
@@ -50,6 +76,6 @@ router.get('/packages/track/:trackingNumber', async (req, res) => {
 });
 
 // Contact form - public
-router.post('/contact', submitContact);
+router.post('/contact', contactLimiter, submitContact);
 
 module.exports = router;

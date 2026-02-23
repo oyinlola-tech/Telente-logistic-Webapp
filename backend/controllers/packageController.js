@@ -108,8 +108,10 @@ async function notifyStatusIfNeeded(previousStatus, pkg) {
 
 const getAllPackages = async (req, res) => {
   const { status, page = 1, limit = 10 } = req.query;
+  const parsedPage = Number(page) > 0 ? Number(page) : 1;
+  const parsedLimit = Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 10;
   try {
-    const result = await Package.findAll({ status, page, limit });
+    const result = await Package.findAll({ status, page: parsedPage, limit: parsedLimit });
     const mappedPackages = result.packages.map((pkg) => mapPackageToResponse(pkg, []));
     res.json({
       success: true,
@@ -172,9 +174,18 @@ const updatePackage = async (req, res) => {
     }
 
     const payload = mapUpdatePayload(req.body || {});
+    if (Object.values(payload).every((value) => value === undefined)) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'No valid fields provided for update', code: 'BAD_REQUEST' }
+      });
+    }
     const updated = await Package.update(id, payload);
     if (!updated) {
-      return res.status(404).json({ success: false, error: { message: 'Package not found', code: 'NOT_FOUND' } });
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Package update failed', code: 'BAD_REQUEST' }
+      });
     }
 
     const pkg = await Package.findById(id);
@@ -237,4 +248,3 @@ module.exports = {
   deletePackage,
   addTrackingEvent
 };
-

@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const AUTH_TOKEN_KEY = 'telente_admin_token';
 
 type ApiEnvelope<T> = {
@@ -60,10 +60,15 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     ...options.headers,
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error('Network error. Please check your connection and try again.');
+  }
 
   const rawText = await response.text();
   let parsed: any = null;
@@ -230,15 +235,32 @@ export interface AdminAuth {
   token: string;
 }
 
+export interface AdminLoginChallenge {
+  otpRequired: true;
+  challengeToken: string;
+  expiresAt: string;
+  devOtp?: string;
+}
+
 export const authApi = {
-  login: async (data: { username: string; password: string }) => {
-    const result = await apiRequest<AdminAuth>('/auth/login', {
+  login: (data: { username: string; password: string }) =>
+    apiRequest<AdminLoginChallenge>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  verifyOtp: async (data: { challengeToken: string; otp: string }) => {
+    const result = await apiRequest<AdminAuth>('/auth/verify-otp', {
       method: 'POST',
       body: JSON.stringify(data),
     });
     setAuthToken(result.token);
     return result;
   },
+  resendOtp: (data: { challengeToken: string }) =>
+    apiRequest<{ expiresAt: string; devOtp?: string }>('/auth/resend-otp', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   me: () => apiRequest<{ id: number; username: string }>('/auth/me'),
   logout: () => setAuthToken(null),
   getToken: () => getAuthToken(),

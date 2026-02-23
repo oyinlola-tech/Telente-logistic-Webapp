@@ -26,6 +26,8 @@ const Package = {
   },
 
   async findAll({ status, page = 1, limit = 10 }) {
+    const parsedPage = Number(page) > 0 ? Number(page) : 1;
+    const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
     let query = 'SELECT * FROM packages';
     const params = [];
     if (status) {
@@ -33,8 +35,8 @@ const Package = {
       params.push(status);
     }
     query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
-    const offset = (page - 1) * limit;
-    params.push(parseInt(limit), offset);
+    const offset = (parsedPage - 1) * parsedLimit;
+    params.push(parsedLimit, offset);
 
     const [rows] = await db.query(query, params);
     
@@ -51,8 +53,8 @@ const Package = {
     return {
       packages: rows,
       total,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / limit)
+      page: parsedPage,
+      totalPages: Math.max(1, Math.ceil(total / parsedLimit))
     };
   },
 

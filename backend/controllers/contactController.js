@@ -1,5 +1,8 @@
 const Contact = require('../models/Contact');
 const { sanitizeText, sanitizeMultiline, sanitizePhone } = require('../utils/security');
+const { services } = require('../data/content');
+
+const allowedServices = new Set([...services.map((item) => item.id), 'other']);
 
 const submitContact = async (req, res) => {
   const name = sanitizeText(req.body?.name, 255);
@@ -10,6 +13,12 @@ const submitContact = async (req, res) => {
     return res.status(400).json({
       success: false,
       error: { message: 'Name, phone, and service are required', code: 'BAD_REQUEST' }
+    });
+  }
+  if (!allowedServices.has(service)) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'Invalid service selected', code: 'BAD_REQUEST' }
     });
   }
 

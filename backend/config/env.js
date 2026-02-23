@@ -5,3 +5,6 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
 
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'development';
+}
