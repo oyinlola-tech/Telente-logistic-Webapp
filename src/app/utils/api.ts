@@ -261,6 +261,21 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  forgotPassword: (data: { identifier: string }) =>
+    apiRequest<{ message: string; devResetToken?: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  resetPassword: (data: { token: string; newPassword: string }) =>
+    apiRequest<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    apiRequest<{ message: string }>('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   me: () => apiRequest<{ id: number; username: string }>('/auth/me'),
   logout: () => setAuthToken(null),
   getToken: () => getAuthToken(),

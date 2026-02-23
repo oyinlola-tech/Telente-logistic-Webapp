@@ -9,6 +9,8 @@ const createTablesSQL = [
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) NULL,
     password VARCHAR(255) NOT NULL,
+    reset_token_hash VARCHAR(255) NULL,
+    reset_token_expires_at TIMESTAMP NULL,
     otp_code_hash VARCHAR(255) NULL,
     otp_expires_at TIMESTAMP NULL,
     otp_attempts INT NOT NULL DEFAULT 0,
@@ -175,6 +177,16 @@ async function ensureDatabaseAndSeedAdmin() {
     if (!(await columnExists(connection, dbName, 'admins', 'otp_last_sent_at'))) {
       await connection.query(
         'ALTER TABLE admins ADD COLUMN otp_last_sent_at TIMESTAMP NULL AFTER otp_attempts'
+      );
+    }
+    if (!(await columnExists(connection, dbName, 'admins', 'reset_token_hash'))) {
+      await connection.query(
+        'ALTER TABLE admins ADD COLUMN reset_token_hash VARCHAR(255) NULL AFTER password'
+      );
+    }
+    if (!(await columnExists(connection, dbName, 'admins', 'reset_token_expires_at'))) {
+      await connection.query(
+        'ALTER TABLE admins ADD COLUMN reset_token_expires_at TIMESTAMP NULL AFTER reset_token_hash'
       );
     }
 

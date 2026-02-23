@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import { Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
-
-const imgLogo =
-  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=160&q=80';
+import logo from '../../assets/telente-logo.svg';
 
 const navItems = [
   { to: '/about', label: 'About Us' },
@@ -28,7 +26,7 @@ export function Header() {
     <header className="bg-white fixed top-0 left-0 right-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-[65px]">
         <Link to="/" className="flex items-center gap-2" onClick={closeMobile}>
-          <img src={imgLogo} alt="Telente Logistics" className="h-[44px] w-auto" />
+          <img src={logo} alt="Telente Logistics logo" className="h-[44px] w-[44px] rounded-xl" />
           <span className="text-lg md:text-xl font-bold text-[#324048]">Telente Logistics</span>
         </Link>
 

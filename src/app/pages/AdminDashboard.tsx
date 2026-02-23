@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import {
   Package,
   Briefcase,
+  KeyRound,
   Plus,
   Edit,
   Trash2,
@@ -56,6 +57,7 @@ export default function AdminDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [actionError, setActionError] = useState('');
   const [actionSuccess, setActionSuccess] = useState('');
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const parseErrorMessage = (error: unknown, fallback: string) =>
     error instanceof Error ? error.message : fallback;
@@ -272,6 +274,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleChangePassword = async (data: { currentPassword: string; newPassword: string }) => {
+    try {
+      const result = await authApi.changePassword(data);
+      setActionSuccess(result.message);
+      setShowChangePasswordModal(false);
+    } catch (error) {
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to change password.'));
+      }
+    }
+  };
+
   useEffect(() => {
     if (!authApi.getToken()) return;
     fetchApplications();
@@ -319,10 +333,22 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-[#324048] mb-2">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-600">Manage packages and tracking information</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h1 className="text-4xl font-bold text-[#324048] mb-2">
+                  Admin Dashboard
+                </h1>
+                <p className="text-gray-600">Manage packages and tracking information</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowChangePasswordModal(true)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#2E4049] text-white font-semibold hover:bg-[#1f2c32] transition-colors"
+              >
+                <KeyRound className="w-4 h-4" />
+                Change Password
+              </button>
+            </div>
             {actionError ? (
               <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {actionError}
@@ -780,6 +806,13 @@ export default function AdminDashboard() {
           onSubmit={(data) => handleUpdateJob(selectedJob.id, data)}
         />
       )}
+
+      {showChangePasswordModal ? (
+        <ChangePasswordModal
+          onClose={() => setShowChangePasswordModal(false)}
+          onSubmit={handleChangePassword}
+        />
+      ) : null}
 
       <Footer />
     </div>
@@ -1292,6 +1325,118 @@ function JobModal({ mode, job, onClose, onSubmit }: JobModalProps) {
             >
               <Briefcase className="w-5 h-5" />
               {mode === 'create' ? 'Create Job' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+interface ChangePasswordModalProps {
+  onClose: () => void;
+  onSubmit: (data: { currentPassword: string; newPassword: string }) => Promise<void>;
+}
+
+function ChangePasswordModal({ onClose, onSubmit }: ChangePasswordModalProps) {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+
+  const validatePassword = (value: string) =>
+    value.length >= 8 &&
+    /[A-Z]/.test(value) &&
+    /[a-z]/.test(value) &&
+    /\d/.test(value) &&
+    /[^A-Za-z0-9]/.test(value);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setFormError('All fields are required.');
+      return;
+    }
+    if (!validatePassword(newPassword)) {
+      setFormError('New password must include uppercase, lowercase, number, symbol, and 8+ characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setFormError('New password and confirmation do not match.');
+      return;
+    }
+
+    setLoading(true);
+    setFormError('');
+    try {
+      await onSubmit({ currentPassword, newPassword });
+    } catch {
+      // handled in parent
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-lg w-full">
+        <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-[#324048]">Change Password</h2>
+          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {formError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {formError}
+            </div>
+          ) : null}
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Current Password</label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Confirm New Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 rounded-lg bg-[#1b75bc] text-white font-semibold hover:bg-[#155a94] disabled:bg-gray-400"
+            >
+              {loading ? 'Saving...' : 'Update Password'}
             </button>
           </div>
         </form>

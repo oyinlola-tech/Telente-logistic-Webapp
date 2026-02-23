@@ -1,4 +1,5 @@
 import { Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import logo from '../../assets/telente-logo.svg';
 
 const imgBackground =
   'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80';
@@ -18,9 +19,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-2xl font-bold text-[#2e4049] mb-4">
-              Telente Logistics Co., Ltd.
-            </h3>
+            <div className="flex items-center gap-3 mb-3">
+              <img src={logo} alt="Telente Logistics logo" className="w-10 h-10 rounded-lg" />
+              <h3 className="text-2xl font-bold text-[#2e4049]">
+                Telente Logistics Co., Ltd.
+              </h3>
+            </div>
+            <div className="h-0.5 w-36 bg-[#1b75bc] mb-4"></div>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#1b75bc]" />

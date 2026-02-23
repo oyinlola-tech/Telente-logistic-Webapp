@@ -137,10 +137,26 @@ function adminOtpTemplate({ username, otp, expiresInMinutes }) {
   });
 }
 
+function adminPasswordResetTemplate({ username, resetUrl, expiresInMinutes }) {
+  return baseTemplate({
+    heading: 'Admin Password Reset',
+    subheading: `Password reset request for ${username}`,
+    contentHtml: `
+      <p>We received a request to reset your admin password.</p>
+      <p>If this was you, use the button below to set a new password.</p>
+      <p>This reset link expires in ${expiresInMinutes} minutes.</p>
+      <p>If you did not request this, ignore this email and secure your account.</p>
+    `,
+    actionLabel: 'Reset Password',
+    actionUrl: resetUrl
+  });
+}
+
 module.exports = {
   packageStatusTemplate,
   applicationReceivedTemplate,
   applicationStatusTemplate,
   newsletterSubscribedTemplate,
-  adminOtpTemplate
+  adminOtpTemplate,
+  adminPasswordResetTemplate
 };

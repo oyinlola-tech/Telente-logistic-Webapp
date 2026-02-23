@@ -10,8 +10,9 @@ import Contact from "./pages/Contact";
 import Tracking from "./pages/Tracking";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
+import AdminResetPassword from "./pages/AdminResetPassword";
 import NotFound from "./pages/NotFound";
-import { ADMIN_LOGIN_PATH } from "./constants/security";
+import { ADMIN_LOGIN_PATH, ADMIN_RESET_PASSWORD_PATH } from "./constants/security";
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
   {
     path: ADMIN_LOGIN_PATH,
     Component: AdminLogin,
+  },
+  {
+    path: ADMIN_RESET_PASSWORD_PATH,
+    Component: AdminResetPassword,
   },
   {
     path: "/admin",

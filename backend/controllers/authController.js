@@ -1,15 +1,27 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const generateToken = require('../utils/generateToken');
 const { sendEmail } = require('../utils/mailer');
-const { adminOtpTemplate } = require('../utils/emailTemplates');
+const { adminOtpTemplate, adminPasswordResetTemplate } = require('../utils/emailTemplates');
 const { sanitizeText, sanitizeOtp } = require('../utils/security');
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRES_MINUTES = Number(process.env.ADMIN_OTP_EXPIRES_MINUTES || 10);
 const OTP_RESEND_SECONDS = Number(process.env.ADMIN_OTP_RESEND_SECONDS || 60);
 const OTP_MAX_ATTEMPTS = Number(process.env.ADMIN_OTP_MAX_ATTEMPTS || 5);
+const RESET_EXPIRES_MINUTES = Number(process.env.ADMIN_RESET_EXPIRES_MINUTES || 30);
+
+function isValidPassword(value) {
+  if (typeof value !== 'string') return false;
+  if (value.length < 8 || value.length > 128) return false;
+  const hasUpper = /[A-Z]/.test(value);
+  const hasLower = /[a-z]/.test(value);
+  const hasDigit = /\d/.test(value);
+  const hasSpecial = /[^A-Za-z0-9]/.test(value);
+  return hasUpper && hasLower && hasDigit && hasSpecial;
+}
 
 function generateOtpCode() {
   const min = 10 ** (OTP_LENGTH - 1);
@@ -281,6 +293,163 @@ const resendOtp = async (req, res) => {
   }
 };
 
+// @desc    Request admin password reset
+// @route   POST /api/auth/forgot-password
+const forgotPassword = async (req, res) => {
+  const identifier = sanitizeText(req.body?.identifier, 255).toLowerCase();
+  if (!identifier) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'Username or email is required', code: 'BAD_REQUEST' }
+    });
+  }
+
+  try {
+    const admin = await Admin.findByUsernameOrEmail(identifier);
+    if (!admin) {
+      return res.json({
+        success: true,
+        data: {
+          message: 'If the account exists, password reset instructions were sent.'
+        }
+      });
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = hashOtp(rawToken);
+    const resetTokenExpiresAt = new Date(Date.now() + RESET_EXPIRES_MINUTES * 60 * 1000);
+
+    await Admin.updateResetToken(admin.id, { resetTokenHash, resetTokenExpiresAt });
+
+    const resetUrl = `${process.env.PUBLIC_SITE_URL || 'http://localhost:5173'}/admin/reset-password?token=${rawToken}`;
+    const to = admin.email || process.env.ADMIN_EMAIL || process.env.SMTP_USER || '';
+
+    if (to) {
+      await sendEmail({
+        to,
+        subject: 'Telente Logistics admin password reset',
+        html: adminPasswordResetTemplate({
+          username: admin.username,
+          resetUrl,
+          expiresInMinutes: RESET_EXPIRES_MINUTES
+        }),
+        text: `Reset your password using this link: ${resetUrl}`
+      });
+    } else {
+      console.warn(`Password reset token for ${admin.username}: ${rawToken}`);
+    }
+
+    const response = {
+      success: true,
+      data: {
+        message: 'If the account exists, password reset instructions were sent.'
+      }
+    };
+    if (String(process.env.NODE_ENV).toLowerCase() !== 'production') {
+      response.data.devResetToken = rawToken;
+    }
+    return res.json(response);
+  } catch (err) {
+    console.error('Auth forgot password error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: 'Server error', code: 'SERVER_ERROR' }
+    });
+  }
+};
+
+// @desc    Reset admin password with token
+// @route   POST /api/auth/reset-password
+const resetPassword = async (req, res) => {
+  const token = sanitizeText(req.body?.token, 512);
+  const newPassword = req.body?.newPassword ? String(req.body.newPassword) : '';
+
+  if (!token || !isValidPassword(newPassword)) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'Valid token and strong new password are required', code: 'BAD_REQUEST' }
+    });
+  }
+
+  try {
+    const admin = await Admin.findByResetTokenHash(hashOtp(token));
+    if (!admin) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Reset token is invalid or expired', code: 'BAD_REQUEST' }
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await Admin.updatePassword(admin.id, passwordHash);
+
+    return res.json({
+      success: true,
+      data: { message: 'Password has been reset successfully' }
+    });
+  } catch (err) {
+    console.error('Auth reset password error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: 'Server error', code: 'SERVER_ERROR' }
+    });
+  }
+};
+
+// @desc    Change admin password (authenticated)
+// @route   POST /api/auth/change-password
+const changePassword = async (req, res) => {
+  const currentPassword = req.body?.currentPassword ? String(req.body.currentPassword) : '';
+  const newPassword = req.body?.newPassword ? String(req.body.newPassword) : '';
+
+  if (!currentPassword || !isValidPassword(newPassword)) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'Current password and strong new password are required', code: 'BAD_REQUEST' }
+    });
+  }
+
+  try {
+    const admin = await Admin.findByIdWithPassword(req.admin.id);
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Admin not found', code: 'NOT_FOUND' }
+      });
+    }
+
+    const isMatch = await Admin.comparePassword(currentPassword, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        error: { message: 'Current password is incorrect', code: 'UNAUTHORIZED' }
+      });
+    }
+
+    const sameAsCurrent = await Admin.comparePassword(newPassword, admin.password);
+    if (sameAsCurrent) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'New password must be different', code: 'BAD_REQUEST' }
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await Admin.updatePassword(admin.id, passwordHash);
+
+    return res.json({
+      success: true,
+      data: { message: 'Password changed successfully' }
+    });
+  } catch (err) {
+    console.error('Auth change password error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: 'Server error', code: 'SERVER_ERROR' }
+    });
+  }
+};
+
 // @desc    Verify token and get admin info
 // @route   GET /api/auth/me
 const getMe = async (req, res) => {
@@ -309,4 +478,4 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { login, verifyOtp, resendOtp, getMe };
+module.exports = { login, verifyOtp, resendOtp, forgotPassword, resetPassword, changePassword, getMe };
