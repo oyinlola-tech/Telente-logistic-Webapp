@@ -13,9 +13,14 @@ export default function Tracking() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    const normalizedTracking = trackingNumber.trim().toUpperCase();
     
-    if (!trackingNumber.trim()) {
+    if (!normalizedTracking) {
       setError('Please enter a tracking number');
+      return;
+    }
+    if (!/^[A-Z0-9-]{6,50}$/.test(normalizedTracking)) {
+      setError('Tracking number format is invalid.');
       return;
     }
 
@@ -24,12 +29,12 @@ export default function Tracking() {
     setPackageData(null);
 
     try {
-      const data = await packageApi.getByTrackingNumber(trackingNumber);
+      const data = await packageApi.getByTrackingNumber(normalizedTracking);
       setPackageData(data);
+      setTrackingNumber(normalizedTracking);
       setSelectedMapLocation(data.currentLocation || data.recipientAddress || '');
-    } catch (err) {
+    } catch {
       setError('Package not found. Please check your tracking number and try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }

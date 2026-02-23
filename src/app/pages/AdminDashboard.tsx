@@ -11,11 +11,8 @@ import {
   Search,
   Filter,
   MapPin,
-  Calendar,
-  Weight,
   Box,
   User,
-  Phone,
   Home as HomeIcon,
   X,
 } from 'lucide-react';

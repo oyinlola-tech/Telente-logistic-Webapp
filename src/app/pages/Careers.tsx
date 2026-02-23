@@ -96,7 +96,7 @@ export default function Careers() {
                           <ul className="space-y-2">
                             {job.requirements.map((req, index) => (
                               <li key={index} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-[#1b75bc] mt-1">•</span>
+                                <span className="text-[#1b75bc] mt-1">*</span>
                                 <span>{req}</span>
                               </li>
                             ))}
@@ -132,19 +132,38 @@ function ApplicationForm({ jobTitle, jobId }: ApplicationFormProps) {
     coverLetter: '',
   });
   const [submitting, setSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
+    setSubmitMessage('');
+
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.trim();
+    const coverLetter = formData.coverLetter.trim();
+
+    if (!name || !email || !phone) {
+      setSubmitError('Name, email, and phone are required.');
+      return;
+    }
+    if (!formData.resume?.name || !/\.(pdf|doc|docx)$/i.test(formData.resume.name)) {
+      setSubmitError('Please attach a valid resume file (.pdf, .doc, .docx).');
+      return;
+    }
+
     setSubmitting(true);
     try {
       const result = await careerApi.apply(jobId, {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        coverLetter: formData.coverLetter,
-        resumeFileName: formData.resume?.name || '',
+        name,
+        email,
+        phone,
+        coverLetter,
+        resumeFileName: formData.resume.name,
       });
-      alert(result.message);
+      setSubmitMessage(result.message);
       setFormData({
         name: '',
         email: '',
@@ -153,7 +172,7 @@ function ApplicationForm({ jobTitle, jobId }: ApplicationFormProps) {
         coverLetter: '',
       });
     } catch (err) {
-      alert(err instanceof Error ? err.message : `Failed to submit application for ${jobTitle}`);
+      setSubmitError(err instanceof Error ? err.message : `Failed to submit application for ${jobTitle}`);
     } finally {
       setSubmitting(false);
     }
@@ -166,6 +185,16 @@ function ApplicationForm({ jobTitle, jobId }: ApplicationFormProps) {
         Apply for this Position
       </h4>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {submitError ? (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {submitError}
+          </div>
+        ) : null}
+        {submitMessage ? (
+          <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            {submitMessage}
+          </div>
+        ) : null}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Full Name *</label>
