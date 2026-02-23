@@ -4,19 +4,24 @@ const db = require('../config/db');
 
 async function seed() {
   try {
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMeStrong!123';
+    const adminUsername = process.env.ADMIN_USERNAME ;
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER || null;
-    const hashedPassword = await bcrypt.hash(adminPassword, 10);
-
-    await db.query(
-      `
-      INSERT INTO admins (username, password, email)
-      VALUES (?, ?, ?)
-      ON DUPLICATE KEY UPDATE password = VALUES(password), email = VALUES(email)
-      `,
-      [adminUsername, hashedPassword, adminEmail]
+    const [existingRows] = await db.query(
+      'SELECT id FROM admins WHERE username = ? LIMIT 1',
+      [adminUsername]
     );
+
+    if (existingRows.length === 0) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await db.query(
+        `
+        INSERT INTO admins (username, password, email)
+        VALUES (?, ?, ?)
+        `,
+        [adminUsername, hashedPassword, adminEmail]
+      );
+    }
 
     console.log(`Seed complete. Admin user ready: ${adminUsername}`);
   } catch (error) {

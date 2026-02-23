@@ -2,15 +2,14 @@ import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { Star, PiggyBank, Box, Clock, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router';
+import logo from '../../assets/telente-logo.svg';
 
 const imgHero =
-  'https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1600&q=80';
-const imgLogo =
-  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80';
+  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1600&q=80';
 const imgTestimonialBg =
   'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80';
 const imgTestimonialAvatar =
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80';
+  'https://images.unsplash.com/photo-1586528116663-7f3f66f6cf6b?auto=format&fit=crop&w=240&q=80';
 
 export default function Home() {
   const benefits = [
@@ -46,7 +45,7 @@ export default function Home() {
     },
   ];
 
-  const partners = [imgLogo, imgLogo, imgLogo, imgLogo];
+  const partners = [logo, logo, logo, logo];
 
   return (
     <div className="bg-white min-h-screen">
@@ -95,7 +94,7 @@ export default function Home() {
               to="/about"
               className="text-[#1b75bc] font-bold text-lg hover:underline"
             >
-              Learn More →
+              Learn More {'->'}
             </Link>
           </div>
         </div>
@@ -125,7 +124,7 @@ export default function Home() {
               to="/services"
               className="text-[#1b75bc] font-bold text-lg hover:underline"
             >
-              View All Services →
+              View All Services {'->'}
             </Link>
           </div>
         </div>
@@ -237,7 +236,7 @@ export default function Home() {
             to="/news"
             className="text-[#1b75bc] font-bold text-lg hover:underline"
           >
-            View All News →
+            View All News {'->'}
           </Link>
         </div>
       </section>

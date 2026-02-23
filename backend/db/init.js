@@ -114,6 +114,19 @@ async function columnExists(connection, dbName, tableName, columnName) {
   return rows.length > 0;
 }
 
+async function adminExists(connection, username) {
+  const [rows] = await connection.query(
+    `
+    SELECT 1
+    FROM admins
+    WHERE username = ?
+    LIMIT 1
+    `,
+    [username]
+  );
+  return rows.length > 0;
+}
+
 async function ensureDatabaseAndSeedAdmin() {
   const host = process.env.DB_HOST;
   const user = process.env.DB_USER;
@@ -193,16 +206,16 @@ async function ensureDatabaseAndSeedAdmin() {
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
     const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMeStrong!123';
     const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER || null;
-    const hashedPassword = await bcrypt.hash(adminPassword, 10);
-
-    await connection.query(
-      `
-      INSERT INTO admins (username, password, email)
-      VALUES (?, ?, ?)
-      ON DUPLICATE KEY UPDATE password = VALUES(password), email = VALUES(email)
-      `,
-      [adminUsername, hashedPassword, adminEmail]
-    );
+    if (!(await adminExists(connection, adminUsername))) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await connection.query(
+        `
+        INSERT INTO admins (username, password, email)
+        VALUES (?, ?, ?)
+        `,
+        [adminUsername, hashedPassword, adminEmail]
+      );
+    }
 
     const [jobCountRows] = await connection.query('SELECT COUNT(*) AS total FROM jobs');
     if (jobCountRows[0].total === 0) {
