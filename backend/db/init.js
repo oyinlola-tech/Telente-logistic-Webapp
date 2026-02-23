@@ -129,6 +129,7 @@ async function adminExists(connection, username) {
 
 async function ensureDatabaseAndSeedAdmin() {
   const host = process.env.DB_HOST;
+  const port = process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306;
   const user = process.env.DB_USER;
   const password = process.env.DB_PASSWORD;
   const dbName = process.env.DB_NAME;
@@ -137,7 +138,7 @@ async function ensureDatabaseAndSeedAdmin() {
     throw new Error('Missing DB_HOST, DB_USER, or DB_NAME environment variables');
   }
 
-  const connection = await mysql.createConnection({ host, user, password });
+  const connection = await mysql.createConnection({ host, port, user, password });
 
   try {
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);

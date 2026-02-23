@@ -770,7 +770,7 @@ export default function AdminDashboard() {
         <PackageModal
           mode="create"
           onClose={() => setShowCreateModal(false)}
-          onSubmit={handleCreatePackage}
+          onSubmit={(data) => handleCreatePackage(data as CreatePackageData)}
         />
       )}
 
@@ -824,7 +824,7 @@ interface PackageModalProps {
   mode: 'create' | 'edit';
   package?: PackageType;
   onClose: () => void;
-  onSubmit: (data: CreatePackageData | UpdatePackageData) => void;
+  onSubmit: (data: CreatePackageData | UpdatePackageData) => Promise<void> | void;
 }
 
 function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalProps) {
