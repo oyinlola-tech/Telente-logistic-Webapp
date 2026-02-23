@@ -8,10 +8,10 @@ const { adminOtpTemplate, adminPasswordResetTemplate } = require('../utils/email
 const { sanitizeText, sanitizeOtp } = require('../utils/security');
 
 const OTP_LENGTH = 6;
-const OTP_EXPIRES_MINUTES = Number(process.env.ADMIN_OTP_EXPIRES_MINUTES || 10);
-const OTP_RESEND_SECONDS = Number(process.env.ADMIN_OTP_RESEND_SECONDS || 60);
-const OTP_MAX_ATTEMPTS = Number(process.env.ADMIN_OTP_MAX_ATTEMPTS || 5);
-const RESET_EXPIRES_MINUTES = Number(process.env.ADMIN_RESET_EXPIRES_MINUTES || 30);
+const OTP_EXPIRES_MINUTES = Number(process.env.ADMIN_OTP_EXPIRES_MINUTES || 5);
+const OTP_RESEND_SECONDS = Number(process.env.ADMIN_OTP_RESEND_SECONDS);
+const OTP_MAX_ATTEMPTS = Number(process.env.ADMIN_OTP_MAX_ATTEMPTS );
+const RESET_EXPIRES_MINUTES = Number(process.env.ADMIN_RESET_EXPIRES_MINUTES );
 
 function shouldExposeDevOtp() {
   return String(process.env.ADMIN_EXPOSE_DEV_OTP).toLowerCase() === 'true';

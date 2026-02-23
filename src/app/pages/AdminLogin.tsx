@@ -32,6 +32,29 @@ export default function AdminLogin() {
     return Math.max(0, Math.floor(diffMs / 1000));
   }, [expiresAt, nowMs]);
 
+  const resetFlow = () => {
+    setChallengeToken('');
+    setOtp('');
+    setExpiresAt(null);
+    setError('');
+    setInfo('');
+  };
+
+  const handleOtpSessionFailure = (message: string) => {
+    const normalized = message.toLowerCase();
+    if (
+      normalized.includes('otp challenge is not active') ||
+      normalized.includes('otp session expired') ||
+      normalized.includes('otp has expired') ||
+      normalized.includes('invalid otp session')
+    ) {
+      resetFlow();
+      setInfo('Your OTP session expired or is no longer active. Please sign in again to request a fresh OTP.');
+      return true;
+    }
+    return false;
+  };
+
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
@@ -68,7 +91,9 @@ export default function AdminLogin() {
       navigate(ADMIN_DASHBOARD_PATH);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'OTP verification failed';
-      setError(message);
+      if (!handleOtpSessionFailure(message)) {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -85,18 +110,12 @@ export default function AdminLogin() {
       setInfo('A new OTP has been sent.');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to resend OTP';
-      setError(message);
+      if (!handleOtpSessionFailure(message)) {
+        setError(message);
+      }
     } finally {
       setResendLoading(false);
     }
-  };
-
-  const resetFlow = () => {
-    setChallengeToken('');
-    setOtp('');
-    setExpiresAt(null);
-    setError('');
-    setInfo('');
   };
 
   return (

@@ -18,7 +18,7 @@ const Admin = {
   async findById(id) {
     const [rows] = await db.query(
       `
-      SELECT id, username, email, otp_attempts, otp_expires_at, otp_last_sent_at, created_at
+      SELECT id, username, email, otp_code_hash, otp_attempts, otp_expires_at, otp_last_sent_at, created_at
       FROM admins
       WHERE id = ?
       LIMIT 1
