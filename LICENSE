@@ -1,0 +1,64 @@
+Telente Logistics Proprietary Software License
+Copyright (c) Oluwayemi Oyinlola. All rights reserved.
+
+Owner:
+Oluwayemi Oyinlola
+Portfolio: https://oyinlola.site
+
+1. Grant of Rights
+No rights are granted by default.
+This software is proprietary and confidential.
+Any use of this software requires prior written permission from Oluwayemi Oyinlola.
+
+2. Prohibited Uses Without Written Permission
+Without prior written authorization, you may not:
+- use this software in any environment (local, staging, production, cloud, on-premise, CI/CD, demo, educational, or commercial)
+- copy, modify, adapt, translate, reverse engineer, disassemble, or create derivative works
+- distribute, share, publish, sublicense, lease, lend, sell, or transfer this software or any part of it
+- remove or alter copyright, attribution, ownership, licensing, legal notices, or branding
+- embed this software into another product, service, repository, framework, template, or platform
+
+3. Commercial Restriction
+Commercial use is strictly prohibited without explicit written permission from the owner.
+This includes direct and indirect monetization, client delivery, paid support, consulting packaging, or inclusion in paid offerings.
+
+4. Ownership
+All intellectual property rights, title, and interest in and to this software remain exclusively with Oluwayemi Oyinlola.
+No transfer of ownership occurs under any circumstance unless separately documented in a signed written agreement.
+
+5. Confidentiality
+Where source access is granted by written permission, recipient must:
+- keep the software confidential
+- restrict access to authorized personnel only
+- prevent unauthorized copying/disclosure
+- apply industry-standard safeguards for sensitive code and credentials
+
+6. Security and Credential Handling
+Use of this software with weak operational security is prohibited.
+You must:
+- protect environment variables and secrets
+- avoid exposing private keys/tokens/passwords
+- apply secure deployment practices
+- promptly report discovered vulnerabilities to the owner
+
+7. Warranty Disclaimer
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+8. Limitation of Liability
+IN NO EVENT SHALL OLUWAYEMI OYINLOLA BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR RELATED TO THE SOFTWARE OR ITS USE.
+
+9. Termination
+Any unauthorized use automatically terminates any permission, whether implied or previously granted.
+Upon termination, you must immediately cease all use and permanently destroy all copies in your possession or control.
+
+10. Enforcement
+Unauthorized use may result in legal action, including injunctive relief, damages, and recovery of legal costs.
+
+11. Permission Requests
+To request usage permission, commercial licensing, source access terms, or deployment rights:
+Oluwayemi Oyinlola
+https://oyinlola.site
+
+By accessing this repository or software artifact, you acknowledge and agree to these terms.
