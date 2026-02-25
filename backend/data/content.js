@@ -152,6 +152,39 @@ const news = [
     image: '/images/news-sustainability.jpg',
     author: 'Sustainability Team',
     publishedAt: '2026-02-05T08:00:00.000Z'
+  },
+  {
+    id: 'abuja-microhub-launch',
+    title: 'Abuja Micro-Hub Launch Improves Same-Day Coverage',
+    excerpt:
+      'A new micro-hub in Abuja strengthens same-day dispatch quality for business districts and residential zones.',
+    content:
+      'Telente Logistics has activated a micro-hub in Abuja to improve first-wave dispatch timing and reduce missed delivery attempts. The location supports rapid consolidation, route balancing, and tighter handoff control for urban deliveries.',
+    image: '/images/news-gateway.jpg',
+    author: 'Distribution Team',
+    publishedAt: '2026-01-30T11:20:00.000Z'
+  },
+  {
+    id: 'cold-chain-quality-program',
+    title: 'Cold-Chain Quality Program Scales to New Client Segments',
+    excerpt:
+      'Temperature-sensitive handling workflows are now available for broader pharmaceutical and food distribution use cases.',
+    content:
+      'Our cold-chain program now includes stricter scan checkpoints, insulated transfer controls, and expanded warehouse handling standards. This improvement helps clients move sensitive products with higher consistency and lower spoilage risk.',
+    image: '/images/news-tracking.jpg',
+    author: 'Quality Assurance Team',
+    publishedAt: '2026-01-24T09:10:00.000Z'
+  },
+  {
+    id: 'peak-season-readiness-2026',
+    title: 'Peak Season Readiness Plan Published for 2026',
+    excerpt:
+      'Telente has published a peak operations plan covering staffing, line-haul capacity, and customer update cadence.',
+    content:
+      'Ahead of seasonal demand, Telente Logistics has expanded shift planning, contingency fleet coverage, and status-update intervals for high-volume lanes. The plan is designed to keep delivery commitments stable during demand spikes.',
+    image: '/images/news-sustainability.jpg',
+    author: 'Planning Team',
+    publishedAt: '2026-01-18T07:45:00.000Z'
   }
 ];
 

@@ -2,6 +2,7 @@ const { services, news } = require('../data/content');
 const CareerApplication = require('../models/CareerApplication');
 const NewsletterSubscriber = require('../models/NewsletterSubscriber');
 const Job = require('../models/Job');
+const crypto = require('crypto');
 const { sendEmail } = require('../utils/mailer');
 const {
   applicationReceivedTemplate,
@@ -58,6 +59,44 @@ const mapApplication = (item) => ({
   submittedAt: item.created_at
 });
 
+const mapNewsArticle = (item) => ({
+  id: item.id,
+  title: item.title,
+  excerpt: item.excerpt,
+  content: item.content,
+  image: item.image,
+  author: item.author,
+  publishedAt: item.publishedAt
+});
+
+const sortNewsByDateDesc = (items) =>
+  [...items].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+const normalizePublishedAt = (value) => {
+  const candidate = sanitizeText(value, 60);
+  const parsed = candidate ? new Date(candidate) : new Date();
+  if (Number.isNaN(parsed.getTime())) return '';
+  return parsed.toISOString();
+};
+
+const mapNewsCreatePayload = (body) => ({
+  title: sanitizeText(body?.title, 255),
+  excerpt: sanitizeText(body?.excerpt, 500),
+  content: sanitizeMultiline(body?.content, 12000),
+  image: sanitizeText(body?.image, 500),
+  author: sanitizeText(body?.author, 120),
+  publishedAt: normalizePublishedAt(body?.publishedAt)
+});
+
+const mapNewsUpdatePayload = (body) => ({
+  title: body?.title !== undefined ? sanitizeText(body?.title, 255) : undefined,
+  excerpt: body?.excerpt !== undefined ? sanitizeText(body?.excerpt, 500) : undefined,
+  content: body?.content !== undefined ? sanitizeMultiline(body?.content, 12000) : undefined,
+  image: body?.image !== undefined ? sanitizeText(body?.image, 500) : undefined,
+  author: body?.author !== undefined ? sanitizeText(body?.author, 120) : undefined,
+  publishedAt: body?.publishedAt !== undefined ? normalizePublishedAt(body?.publishedAt) : undefined
+});
+
 const getServices = async (req, res) => {
   res.json({ success: true, data: services });
 };
@@ -78,15 +117,16 @@ const getNews = async (req, res) => {
   const parsedPage = Number(page) > 0 ? Number(page) : 1;
   const parsedLimit = Number(limit) > 0 && Number(limit) <= 50 ? Number(limit) : 10;
   const start = (parsedPage - 1) * parsedLimit;
-  const paginated = news.slice(start, start + parsedLimit);
+  const sortedNews = sortNewsByDateDesc(news);
+  const paginated = sortedNews.slice(start, start + parsedLimit);
 
   res.json({
     success: true,
     data: {
-      articles: paginated,
-      total: news.length,
+      articles: paginated.map(mapNewsArticle),
+      total: sortedNews.length,
       page: parsedPage,
-      totalPages: Math.ceil(news.length / parsedLimit)
+      totalPages: Math.ceil(sortedNews.length / parsedLimit)
     }
   });
 };
@@ -99,7 +139,64 @@ const getNewsById = async (req, res) => {
       error: { message: 'Article not found', code: 'NOT_FOUND' }
     });
   }
-  res.json({ success: true, data: article });
+  res.json({ success: true, data: mapNewsArticle(article) });
+};
+
+const createNews = async (req, res) => {
+  const payload = mapNewsCreatePayload(req.body || {});
+  if (!payload.title || !payload.excerpt || !payload.content || !payload.image || !payload.author || !payload.publishedAt) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'title, excerpt, content, image, author, and valid publishedAt are required', code: 'BAD_REQUEST' }
+    });
+  }
+
+  const id = crypto.randomUUID ? crypto.randomUUID() : `news-${Date.now()}`;
+  const article = { id, ...payload };
+  news.unshift(article);
+  return res.status(201).json({ success: true, data: mapNewsArticle(article) });
+};
+
+const updateNews = async (req, res) => {
+  const id = sanitizeText(req.params.id, 120);
+  const index = news.findIndex((item) => item.id === id);
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      error: { message: 'Article not found', code: 'NOT_FOUND' }
+    });
+  }
+
+  const payload = mapNewsUpdatePayload(req.body || {});
+  if (Object.values(payload).every((value) => value === undefined || value === '')) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'No valid fields provided for update', code: 'BAD_REQUEST' }
+    });
+  }
+
+  const existing = news[index];
+  news[index] = {
+    ...existing,
+    ...Object.fromEntries(
+      Object.entries(payload).filter(([, value]) => value !== undefined && value !== '')
+    )
+  };
+
+  return res.json({ success: true, data: mapNewsArticle(news[index]) });
+};
+
+const deleteNews = async (req, res) => {
+  const id = sanitizeText(req.params.id, 120);
+  const index = news.findIndex((item) => item.id === id);
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      error: { message: 'Article not found', code: 'NOT_FOUND' }
+    });
+  }
+  news.splice(index, 1);
+  return res.json({ success: true, data: { message: 'Article deleted' } });
 };
 
 const getJobs = async (req, res) => {
@@ -449,6 +546,9 @@ module.exports = {
   getServiceById,
   getNews,
   getNewsById,
+  createNews,
+  updateNews,
+  deleteNews,
   getJobs,
   createJob,
   updateJob,

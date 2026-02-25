@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import {
   Package,
   Briefcase,
+  Newspaper,
   KeyRound,
   Plus,
   Edit,
@@ -20,12 +21,15 @@ import {
 import {
   packageApi,
   Package as PackageType,
+  NewsArticle,
+  NewsUpsertData,
   JobPosting,
   JobUpsertData,
   JobApplicationRecord,
   ApplicationStatus,
   CreatePackageData,
   UpdatePackageData,
+  newsApi,
   careerApi,
   authApi,
 } from '../utils/api';
@@ -42,6 +46,8 @@ export default function AdminDashboard() {
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [jobsLoading, setJobsLoading] = useState(true);
+  const [newsItems, setNewsItems] = useState<NewsArticle[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
   const [applications, setApplications] = useState<JobApplicationRecord[]>([]);
   const [applicationsLoading, setApplicationsLoading] = useState(true);
   const [applicationStatusDrafts, setApplicationStatusDrafts] = useState<Record<string, ApplicationStatus>>({});
@@ -53,6 +59,9 @@ export default function AdminDashboard() {
   const [showCreateJobModal, setShowCreateJobModal] = useState(false);
   const [showEditJobModal, setShowEditJobModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
+  const [showCreateNewsModal, setShowCreateNewsModal] = useState(false);
+  const [showEditNewsModal, setShowEditNewsModal] = useState(false);
+  const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [actionError, setActionError] = useState('');
@@ -83,7 +92,7 @@ export default function AdminDashboard() {
 
       try {
         await authApi.me();
-        await Promise.all([fetchPackages(), fetchJobs()]);
+        await Promise.all([fetchPackages(), fetchJobs(), fetchNews()]);
       } catch (error) {
         authApi.logout();
         navigate(ADMIN_LOGIN_PATH);
@@ -126,6 +135,18 @@ export default function AdminDashboard() {
       setActionError(parseErrorMessage(error, 'Failed to load jobs'));
     } finally {
       setJobsLoading(false);
+    }
+  };
+
+  const fetchNews = async () => {
+    setNewsLoading(true);
+    try {
+      const result = await newsApi.getAll({ page: 1, limit: 100 });
+      setNewsItems(result.articles);
+    } catch (error) {
+      setActionError(parseErrorMessage(error, 'Failed to load news articles'));
+    } finally {
+      setNewsLoading(false);
     }
   };
 
@@ -232,6 +253,46 @@ export default function AdminDashboard() {
     } catch (error) {
       if (!handleUnauthorized(error)) {
         setActionError(parseErrorMessage(error, 'Failed to delete job.'));
+      }
+    }
+  };
+
+  const handleCreateNews = async (data: NewsUpsertData) => {
+    try {
+      await newsApi.adminCreate(data);
+      setShowCreateNewsModal(false);
+      setActionSuccess('News article created successfully.');
+      await fetchNews();
+    } catch (error) {
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to create news article.'));
+      }
+    }
+  };
+
+  const handleUpdateNews = async (id: string, data: NewsUpsertData) => {
+    try {
+      await newsApi.adminUpdate(id, data);
+      setShowEditNewsModal(false);
+      setSelectedNews(null);
+      setActionSuccess('News article updated successfully.');
+      await fetchNews();
+    } catch (error) {
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to update news article.'));
+      }
+    }
+  };
+
+  const handleDeleteNews = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this article?')) return;
+    try {
+      await newsApi.adminDelete(id);
+      setActionSuccess('News article deleted successfully.');
+      await fetchNews();
+    } catch (error) {
+      if (!handleUnauthorized(error)) {
+        setActionError(parseErrorMessage(error, 'Failed to delete news article.'));
       }
     }
   };
@@ -607,6 +668,83 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* News Management */}
+          <div className="mt-10 bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-[#324048]">News Management</h2>
+                <p className="text-gray-600">Add and update news articles shown on the public News page</p>
+              </div>
+              <button
+                onClick={() => setShowCreateNewsModal(true)}
+                className="bg-[#1b75bc] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#155a94] transition-colors flex items-center gap-2"
+              >
+                <Newspaper className="w-5 h-5" />
+                Add Article
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b-2 border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-[#324048]">Title</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-[#324048]">Author</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-[#324048]">Published</th>
+                    <th className="px-4 py-3 text-left text-sm font-bold text-[#324048]">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {newsLoading ? (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
+                        Loading articles...
+                      </td>
+                    </tr>
+                  ) : newsItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
+                        No news articles available
+                      </td>
+                    </tr>
+                  ) : (
+                    newsItems.map((article) => (
+                      <tr key={article.id}>
+                        <td className="px-4 py-3">
+                          <p className="font-bold text-[#2E4049]">{article.title}</p>
+                          <p className="text-xs text-gray-500 line-clamp-2 mt-1">{article.excerpt}</p>
+                        </td>
+                        <td className="px-4 py-3 text-[#2E4049]">{article.author}</td>
+                        <td className="px-4 py-3 text-[#2E4049]">
+                          {new Date(article.publishedAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedNews(article);
+                                setShowEditNewsModal(true);
+                              }}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            >
+                              <Edit className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteNews(article.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Applications Management */}
           <div className="mt-10 bg-white rounded-xl p-6 shadow-sm">
             <div className="flex flex-col md:flex-row md:items-end gap-4 justify-between mb-6">
@@ -806,6 +944,26 @@ export default function AdminDashboard() {
             setSelectedJob(null);
           }}
           onSubmit={(data) => handleUpdateJob(selectedJob.id, data)}
+        />
+      )}
+
+      {showCreateNewsModal && (
+        <NewsModal
+          mode="create"
+          onClose={() => setShowCreateNewsModal(false)}
+          onSubmit={handleCreateNews}
+        />
+      )}
+
+      {showEditNewsModal && selectedNews && (
+        <NewsModal
+          mode="edit"
+          article={selectedNews}
+          onClose={() => {
+            setShowEditNewsModal(false);
+            setSelectedNews(null);
+          }}
+          onSubmit={(data) => handleUpdateNews(selectedNews.id, data)}
         />
       )}
 
@@ -1356,6 +1514,159 @@ function JobModal({ mode, job, onClose, onSubmit }: JobModalProps) {
             >
               <Briefcase className="w-5 h-5" />
               {mode === 'create' ? 'Create Job' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+interface NewsModalProps {
+  mode: 'create' | 'edit';
+  article?: NewsArticle;
+  onClose: () => void;
+  onSubmit: (data: NewsUpsertData) => Promise<void> | void;
+}
+
+function NewsModal({ mode, article, onClose, onSubmit }: NewsModalProps) {
+  const [formData, setFormData] = useState({
+    title: article?.title || '',
+    excerpt: article?.excerpt || '',
+    content: article?.content || '',
+    image: article?.image || '/images/news-gateway.jpg',
+    author: article?.author || 'Operations Team',
+    publishedAt: article?.publishedAt ? article.publishedAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
+  });
+  const [formError, setFormError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const title = formData.title.trim();
+    const excerpt = formData.excerpt.trim();
+    const content = formData.content.trim();
+    const image = formData.image.trim();
+    const author = formData.author.trim();
+    const publishedAt = formData.publishedAt.trim();
+
+    if (!title || !excerpt || !content || !image || !author || !publishedAt) {
+      setFormError('Please complete all required fields.');
+      return;
+    }
+
+    setFormError('');
+    onSubmit({
+      title,
+      excerpt,
+      content,
+      image,
+      author,
+      publishedAt: new Date(publishedAt).toISOString(),
+    });
+  };
+
+  const updateField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-[#324048]">
+            {mode === 'create' ? 'Create News Article' : 'Edit News Article'}
+          </h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {formError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {formError}
+            </div>
+          ) : null}
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Title *</label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => updateField('title', e.target.value)}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Excerpt *</label>
+            <textarea
+              value={formData.excerpt}
+              onChange={(e) => updateField('excerpt', e.target.value)}
+              rows={3}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">Content *</label>
+            <textarea
+              value={formData.content}
+              onChange={(e) => updateField('content', e.target.value)}
+              rows={8}
+              required
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Image Path *</label>
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) => updateField('image', e.target.value)}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Author *</label>
+              <input
+                type="text"
+                value={formData.author}
+                onChange={(e) => updateField('author', e.target.value)}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Published Date *</label>
+              <input
+                type="date"
+                value={formData.publishedAt}
+                onChange={(e) => updateField('publishedAt', e.target.value)}
+                required
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 justify-end pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 border-2 border-gray-300 rounded-lg font-bold hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-3 bg-[#1b75bc] text-white rounded-lg font-bold hover:bg-[#155a94] transition-colors"
+            >
+              {mode === 'create' ? 'Create Article' : 'Save Changes'}
             </button>
           </div>
         </form>

@@ -5,6 +5,9 @@ const {
   getServiceById,
   getNews,
   getNewsById,
+  createNews,
+  updateNews,
+  deleteNews,
   getJobs,
   createJob,
   updateJob,
@@ -45,6 +48,9 @@ router.get('/services/:id', getServiceById);
 
 router.get('/news', getNews);
 router.get('/news/:id', getNewsById);
+router.post('/admin/news', auth, createNews);
+router.put('/admin/news/:id', auth, updateNews);
+router.delete('/admin/news/:id', auth, deleteNews);
 
 router.get('/careers', getJobs);
 router.post('/careers/:id/apply', applyLimiter, applyToJob);

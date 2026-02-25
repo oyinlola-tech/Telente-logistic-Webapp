@@ -174,6 +174,15 @@ export interface NewsArticle {
   author: string;
 }
 
+export interface NewsUpsertData {
+  title: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  author: string;
+  publishedAt: string;
+}
+
 export interface JobPosting {
   id: string;
   title: string;
@@ -361,6 +370,20 @@ export const newsApi = {
     );
   },
   getById: (id: string) => apiRequest<NewsArticle>(`/news/${id}`),
+  adminCreate: (data: NewsUpsertData) =>
+    apiRequest<NewsArticle>('/admin/news', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  adminUpdate: (id: string, data: Partial<NewsUpsertData>) =>
+    apiRequest<NewsArticle>(`/admin/news/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  adminDelete: (id: string) =>
+    apiRequest<{ message: string }>(`/admin/news/${id}`, {
+      method: 'DELETE',
+    }),
 };
 
 export const careerApi = {

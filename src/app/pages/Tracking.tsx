@@ -603,15 +603,6 @@ export default function Tracking() {
                     <div>
                       <p className="text-sm text-gray-600">Address</p>
                       <p className="font-bold text-[#2E4049]">{packageData.senderAddress}</p>
-                      <div className="mt-1">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedMapLocation(packageData.senderAddress)}
-                          className="text-sm text-[#1b75bc] font-bold hover:underline"
-                        >
-                          View sender address on map
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -631,15 +622,6 @@ export default function Tracking() {
                     <div>
                       <p className="text-sm text-gray-600">Address</p>
                       <p className="font-bold text-[#2E4049]">{packageData.recipientAddress}</p>
-                      <div className="mt-1">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedMapLocation(packageData.recipientAddress)}
-                          className="text-sm text-[#1b75bc] font-bold hover:underline"
-                        >
-                          View recipient address on map
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
