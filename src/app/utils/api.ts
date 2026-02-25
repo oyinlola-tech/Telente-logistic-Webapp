@@ -115,7 +115,7 @@ export interface Package {
   weight: number;
   dimensions: string;
   service: string;
-  status: 'pending' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled';
+  status: 'pending' | 'in_transit' | 'out_for_delivery' | 'delayed' | 'delivered' | 'cancelled';
   currentLocation?: string;
   estimatedDelivery: string;
   createdAt: string;
@@ -152,6 +152,7 @@ export interface UpdatePackageData {
   dimensions?: string;
   service?: string;
   status?: Package['status'];
+  statusDescription?: string;
   currentLocation?: string;
   estimatedDelivery?: string;
 }

@@ -301,6 +301,7 @@ export default function AdminDashboard() {
       pending: 'bg-yellow-100 text-yellow-800',
       in_transit: 'bg-blue-100 text-blue-800',
       out_for_delivery: 'bg-purple-100 text-purple-800',
+      delayed: 'bg-orange-100 text-orange-800',
       delivered: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
     };
@@ -404,6 +405,7 @@ export default function AdminDashboard() {
                     <option value="pending">Pending</option>
                     <option value="in_transit">In Transit</option>
                     <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delayed">Delayed</option>
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
@@ -841,6 +843,7 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
     dimensions: pkg?.dimensions || '',
     service: pkg?.service || 'Standard',
     status: pkg?.status || 'pending',
+    statusDescription: '',
     currentLocation: pkg?.currentLocation || '',
     estimatedDelivery: pkg?.estimatedDelivery || '',
   });
@@ -856,6 +859,7 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
     const recipientAddress = formData.recipientAddress.trim();
     const dimensions = formData.dimensions.trim();
     const service = formData.service.trim();
+    const statusDescription = formData.statusDescription.trim();
 
     if (
       !senderName ||
@@ -877,6 +881,11 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
       return;
     }
 
+    if (mode === 'edit' && formData.status === 'delayed' && !statusDescription) {
+      setFormError('Please provide the reason for delay.');
+      return;
+    }
+
     setFormError('');
     onSubmit({
       ...formData,
@@ -887,7 +896,8 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
       recipientPhone,
       recipientAddress,
       dimensions,
-      service
+      service,
+      statusDescription
     });
   };
 
@@ -1110,16 +1120,37 @@ function PackageModal({ mode, package: pkg, onClose, onSubmit }: PackageModalPro
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => updateField('status', e.target.value)}
+                    onChange={(e) => {
+                      const nextStatus = e.target.value;
+                      updateField('status', nextStatus);
+                      if (nextStatus !== 'delayed') {
+                        updateField('statusDescription', '');
+                      }
+                    }}
                     className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
                   >
                     <option value="pending">Pending</option>
                     <option value="in_transit">In Transit</option>
                     <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delayed">Delayed</option>
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
+                {formData.status === 'delayed' && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                      Reason for Delay *
+                    </label>
+                    <textarea
+                      value={formData.statusDescription}
+                      onChange={(e) => updateField('statusDescription', e.target.value)}
+                      rows={3}
+                      placeholder="Explain the delay so clients can see this update in tracking history."
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#1b75bc]"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
                     Current Location

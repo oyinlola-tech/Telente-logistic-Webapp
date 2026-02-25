@@ -1,5 +1,5 @@
 const APPLICATION_STATUSES = ['new', 'reviewed', 'shortlisted', 'rejected'];
-const PACKAGE_STATUSES = ['pending', 'in_transit', 'out_for_delivery', 'delivered', 'cancelled'];
+const PACKAGE_STATUSES = ['pending', 'in_transit', 'out_for_delivery', 'delayed', 'delivered', 'cancelled'];
 
 function sanitizeText(value, maxLen = 255) {
   if (value === undefined || value === null) return '';

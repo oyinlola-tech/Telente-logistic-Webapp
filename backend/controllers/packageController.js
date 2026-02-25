@@ -81,7 +81,7 @@ const mapUpdatePayload = (body) => ({
     ? sanitizeText(body.estimated_delivery || body.estimatedDelivery, 30) : undefined
 });
 
-async function notifyStatusIfNeeded(previousStatus, pkg) {
+async function notifyStatusIfNeeded(previousStatus, pkg, statusReason = '') {
   if (!pkg || !pkg.status || previousStatus === pkg.status) return;
 
   const recipients = [pkg.recipient_email, pkg.sender_email].filter(Boolean);
@@ -93,7 +93,8 @@ async function notifyStatusIfNeeded(previousStatus, pkg) {
     trackingNumber: pkg.tracking_number,
     status: pkg.status,
     location: pkg.current_location || '',
-    estimatedDelivery: pkg.estimated_delivery
+    estimatedDelivery: pkg.estimated_delivery,
+    statusReason
   });
 
   for (const recipient of recipients) {
@@ -101,7 +102,7 @@ async function notifyStatusIfNeeded(previousStatus, pkg) {
       to: recipient,
       subject,
       html,
-      text: `Your package ${pkg.tracking_number} status is now ${pkg.status}.`
+      text: `Your package ${pkg.tracking_number} status is now ${pkg.status}.${statusReason ? ` Reason: ${statusReason}` : ''}`
     });
   }
 }
@@ -188,9 +189,31 @@ const updatePackage = async (req, res) => {
       });
     }
 
+    let statusReason = '';
+    const nextStatus = payload.status;
+    if (nextStatus && nextStatus !== existing.status) {
+      const eventLocation = payload.current_location
+        || existing.current_location
+        || existing.recipient_address
+        || existing.sender_address
+        || 'Location update pending';
+      const eventDescription = sanitizeMultiline(
+        req.body?.status_description || req.body?.statusDescription,
+        1000
+      ) || `Status changed to ${nextStatus.replace(/_/g, ' ')}`;
+      statusReason = eventDescription;
+
+      await Package.addTrackingEvent({
+        package_id: id,
+        location: eventLocation,
+        status: nextStatus,
+        description: eventDescription
+      });
+    }
+
     const pkg = await Package.findById(id);
     const trackingHistory = await Package.getTrackingEvents(id);
-    await notifyStatusIfNeeded(existing.status, pkg);
+    await notifyStatusIfNeeded(existing.status, pkg, statusReason);
     res.json({ success: true, data: mapPackageToResponse(pkg, trackingHistory) });
   } catch (err) {
     console.error(err);
@@ -232,7 +255,7 @@ const addTrackingEvent = async (req, res) => {
     await Package.update(id, { current_location: location, status });
     const updatedPackage = await Package.findById(id);
     const trackingHistory = await Package.getTrackingEvents(id);
-    await notifyStatusIfNeeded(pkg.status, updatedPackage);
+    await notifyStatusIfNeeded(pkg.status, updatedPackage, description);
     res.status(201).json({ success: true, data: mapPackageToResponse(updatedPackage, trackingHistory) });
   } catch (err) {
     console.error(err);

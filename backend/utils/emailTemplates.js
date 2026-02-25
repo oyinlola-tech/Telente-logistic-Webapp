@@ -37,8 +37,16 @@ function toTitleCase(status) {
     .replace(/\b\w/g, (match) => match.toUpperCase());
 }
 
-function packageStatusTemplate({ recipientName, trackingNumber, status, location, estimatedDelivery }) {
+function packageStatusTemplate({ recipientName, trackingNumber, status, location, estimatedDelivery, statusReason }) {
   const statusLabel = toTitleCase(status);
+  const reasonHtml = statusReason
+    ? `
+      <tr>
+        <td style="padding:8px;border:1px solid ${PRIMARY_COLOR};font-weight:700;">Update Reason</td>
+        <td style="padding:8px;border:1px solid ${PRIMARY_COLOR};">${statusReason}</td>
+      </tr>
+    `
+    : '';
   return baseTemplate({
     heading: 'Package Status Update',
     subheading: `Tracking number ${trackingNumber}`,
@@ -58,6 +66,7 @@ function packageStatusTemplate({ recipientName, trackingNumber, status, location
           <td style="padding:8px;border:1px solid ${PRIMARY_COLOR};font-weight:700;">Estimated Delivery</td>
           <td style="padding:8px;border:1px solid ${PRIMARY_COLOR};">${estimatedDelivery ? new Date(estimatedDelivery).toLocaleDateString() : 'Not set'}</td>
         </tr>
+        ${reasonHtml}
       </table>
       <p style="margin-top:16px;">You will continue receiving automatic milestone updates until final delivery.</p>
       <p style="margin:0;">If you need support, reply to this email and our team will assist immediately.</p>

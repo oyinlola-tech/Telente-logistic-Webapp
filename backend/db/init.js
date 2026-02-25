@@ -33,7 +33,7 @@ const createTablesSQL = [
     weight DECIMAL(10,2) NOT NULL,
     dimensions VARCHAR(50) NOT NULL,
     service VARCHAR(50) NOT NULL,
-    status ENUM('pending','in_transit','out_for_delivery','delivered','cancelled') NOT NULL DEFAULT 'pending',
+    status ENUM('pending','in_transit','out_for_delivery','delayed','delivered','cancelled') NOT NULL DEFAULT 'pending',
     current_location VARCHAR(255),
     estimated_delivery DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -158,6 +158,9 @@ async function ensureDatabaseAndSeedAdmin() {
         'ALTER TABLE packages ADD COLUMN recipient_email VARCHAR(255) NULL AFTER recipient_name'
       );
     }
+    await connection.query(
+      "ALTER TABLE packages MODIFY COLUMN status ENUM('pending','in_transit','out_for_delivery','delayed','delivered','cancelled') NOT NULL DEFAULT 'pending'"
+    );
     if (!(await columnExists(connection, dbName, 'career_applications', 'status'))) {
       await connection.query(
         "ALTER TABLE career_applications ADD COLUMN status ENUM('new','reviewed','shortlisted','rejected') NOT NULL DEFAULT 'new' AFTER resume_file_name"
